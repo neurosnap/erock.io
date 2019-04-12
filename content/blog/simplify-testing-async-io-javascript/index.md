@@ -1,12 +1,12 @@
 ---
 title: Simply testing async I/O in javascript
-date: "2019-04-12T10:00:00.000Z"
+date: '2019-04-12T10:00:00.000Z'
 description: How to write declarative side-effects
 ---
 
-Testing asynchronous I/O sucks. Interacting with the external world, whether it's
-a remote HTTP server, a database, or the filesystem requires mocking what we
-expect will happen. Sometimes these mocks are rather difficult to construct
+Testing asynchronous I/O sucks. Interacting with the external world, whether
+it's a remote HTTP server, a database, or the filesystem requires mocking what
+we expect will happen. Sometimes these mocks are rather difficult to construct
 because some functionality was never intended to be mocked. Mocking a
 filesystem, for example, can be difficult to get correctly. Errors that could
 arise from working with the filesystem might not have been conceived when
@@ -29,12 +29,12 @@ can become just as easy to test as pure functions.
 
 ```js
 // version 1
-const fs = require("fs")
-const fetch = require("fetch")
+const fs = require('fs')
+const fetch = require('fetch')
 
 function writeFile(fname, data) {
   return new Promise((resolve, reject) => {
-    fs.writeFile(fname, data, err => {
+    fs.writeFile(fname, data, (err) => {
       if (err) {
         reject(err)
       }
@@ -46,22 +46,22 @@ function writeFile(fname, data) {
 
 function fetchAndSaveMovie(id) {
   return fetch(`http://localhost/movies/${id}`)
-    .then(resp => {
+    .then((resp) => {
       if (resp.status !== 200) {
-        throw new Error("request unsuccessful")
+        throw new Error('request unsuccessful')
       }
 
       return resp
     })
-    .then(resp => resp.json())
-    .then(movie => {
+    .then((resp) => resp.json())
+    .then((movie) => {
       const data = JSON.stringify(movie, null, 2)
-      const fname = "movie.json"
+      const fname = 'movie.json'
       return writeFile(fname, data)
     })
 }
 
-fetchAndSaveMovie("1")
+fetchAndSaveMovie('1')
   .then(console.log)
   .catch(console.error)
 ```
@@ -84,58 +84,58 @@ return a desired response.
 
 ```js
 // version 1 test
-const nock = require("nock")
+const nock = require('nock')
 
-test("when request is 500", () => {
+test('when request is 500', () => {
   nock(/localhost/)
-    .get("/movies/1")
+    .get('/movies/1')
     .reply(500, {
-      error: "something happened",
+      error: 'something happened',
     })
-  const fn = require("./index")
+  const fn = require('./index')
 
-  return expect(fn("1")).rejects.toThrow("request unsuccessful")
+  return expect(fn('1')).rejects.toThrow('request unsuccessful')
 })
 
-describe("when the request is 200", () => {
+describe('when the request is 200', () => {
   beforeEach(() => jest.resetModules())
 
-  test("when saving the file fails", () => {
+  test('when saving the file fails', () => {
     nock(/localhost/)
-      .get("/movies/1")
+      .get('/movies/1')
       .reply(200, {
-        name: "a movie",
+        name: 'a movie',
       })
 
-    jest.mock("fs", () => {
+    jest.mock('fs', () => {
       return {
         writeFile: (f, d, cb) => {
-          cb("some error")
+          cb('some error')
         },
       }
     })
-    const fn = require("./index")
+    const fn = require('./index')
 
-    return expect(fn("1")).rejects.toBe("some error")
+    return expect(fn('1')).rejects.toBe('some error')
   })
 
-  test("when saving the file succeeds", () => {
+  test('when saving the file succeeds', () => {
     nock(/localhost/)
-      .get("/movies/1")
+      .get('/movies/1')
       .reply(200, {
-        name: "a movie",
+        name: 'a movie',
       })
 
-    jest.mock("fs", () => {
+    jest.mock('fs', () => {
       return {
         writeFile: (f, d, cb) => {
           cb()
         },
       }
     })
-    const fn = require("./index")
+    const fn = require('./index')
 
-    return expect(fn("1")).resolves.toBe("saved movie.json")
+    return expect(fn('1')).resolves.toBe('saved movie.json')
   })
 })
 ```
@@ -184,22 +184,22 @@ forward. `cofx` works both in node and in the browser.
 
 ```js
 // version 2
-const fetch = require("node-fetch")
-const { task, call } = require("cofx")
+const fetch = require('node-fetch')
+const { task, call } = require('cofx')
 
 function* fetchAndSaveMovie(id) {
   const resp = yield call(fetch, `http://localhost/movies/${id}`)
   if (resp.status !== 200) {
-    throw new Error("request unsuccessful")
+    throw new Error('request unsuccessful')
   }
 
   // resp.json() needs proper context `this` from fetch to work which requires
   // special execution
-  const movie = yield call([resp, "json"])
+  const movie = yield call([resp, 'json'])
   const data = JSON.stringify(movie, null, 2)
-  const fname = "movie.json"
+  const fname = 'movie.json'
 
-  let msg = ""
+  let msg = ''
   try {
     yield call(writeFile, fname, data)
     msg = `saved ${fname}`
@@ -210,7 +210,7 @@ function* fetchAndSaveMovie(id) {
   return msg
 }
 
-task(fetchAndSaveMovie, "1")
+task(fetchAndSaveMovie, '1')
   .then(console.log)
   .catch(console.error)
 ```
@@ -250,35 +250,35 @@ this function:
 
 ```js
 // version 2 test
-test("when request is 500", () => {
-  const gen = fetchAndSaveMovie2("1")
+test('when request is 500', () => {
+  const gen = fetchAndSaveMovie2('1')
   gen.next() // fetch
   const t = () => gen.next({ status: 500 })
-  expect(t).toThrow("request unsuccessful")
+  expect(t).toThrow('request unsuccessful')
 })
 
-describe("when the request is 200", () => {
-  test("when saving the file fails", () => {
-    const gen = fetchAndSaveMovie2("1")
+describe('when the request is 200', () => {
+  test('when saving the file fails', () => {
+    const gen = fetchAndSaveMovie2('1')
     gen.next() // fetch
     gen.next({ status: 200 }) // json
-    gen.next({ name: "Lord of the Rings" }) // writeFile
-    const val = gen.throw("some error") // return value
+    gen.next({ name: 'Lord of the Rings' }) // writeFile
+    const val = gen.throw('some error') // return value
     expect(val).toEqual({
       done: true,
-      value: "some error",
+      value: 'some error',
     })
   })
 
-  test("when saving the file succeeds", () => {
-    const gen = fetchAndSaveMovie2("1")
+  test('when saving the file succeeds', () => {
+    const gen = fetchAndSaveMovie2('1')
     gen.next() // fetch
     gen.next({ status: 200 }) // json
-    gen.next({ name: "Lord of the Rings" }) // writeFile
+    gen.next({ name: 'Lord of the Rings' }) // writeFile
     const val = gen.next() // return value
     expect(val).toEqual({
       done: true,
-      value: "saved movie.json",
+      value: 'saved movie.json',
     })
   })
 })
@@ -297,60 +297,60 @@ Because our function yields JSON objects we can check to see if they match what
 we are expecting.
 
 ```js
-test("when request is 500 - verbose", () => {
-  const gen = fetchAndSaveMovie2("1")
+test('when request is 500 - verbose', () => {
+  const gen = fetchAndSaveMovie2('1')
   expect(gen.next()).toEqual({
     done: false,
-    value: call(fetch, "http://localhost/movies/1"),
+    value: call(fetch, 'http://localhost/movies/1'),
   }) // fetch
   const t = () => gen.next({ status: 500 })
-  expect(t).toThrow("request unsuccessful")
+  expect(t).toThrow('request unsuccessful')
 })
 
-describe("when the request is 200 - verbose", () => {
-  test("when saving the file fails", () => {
-    const gen = fetchAndSaveMovie2("2")
+describe('when the request is 200 - verbose', () => {
+  test('when saving the file fails', () => {
+    const gen = fetchAndSaveMovie2('2')
     expect(gen.next()).toEqual({
       done: false,
-      value: call(fetch, "http://localhost/movies/2"),
+      value: call(fetch, 'http://localhost/movies/2'),
     })
     const resp = { status: 200 }
     expect(gen.next(resp)).toEqual({
       done: false,
-      value: call([resp, "json"]),
+      value: call([resp, 'json']),
     })
-    const data = { name: "Lord of the Rings" }
+    const data = { name: 'Lord of the Rings' }
     expect(gen.next(data)).toEqual({
       done: false,
-      value: call(writeFile, "movie.json", JSON.stringify(data, null, 2)),
+      value: call(writeFile, 'movie.json', JSON.stringify(data, null, 2)),
     })
-    const val = gen.throw("some error") // return value
+    const val = gen.throw('some error') // return value
     expect(val).toEqual({
       done: true,
-      value: "some error",
+      value: 'some error',
     })
   })
 
-  test("when saving the file succeeds", () => {
-    const gen = fetchAndSaveMovie2("3")
+  test('when saving the file succeeds', () => {
+    const gen = fetchAndSaveMovie2('3')
     expect(gen.next()).toEqual({
       done: false,
-      value: call(fetch, "http://localhost/movies/3"),
+      value: call(fetch, 'http://localhost/movies/3'),
     })
     const resp = { status: 200 }
     expect(gen.next(resp)).toEqual({
       done: false,
-      value: call([resp, "json"]),
+      value: call([resp, 'json']),
     })
-    const data = { name: "Lord of the Rings" }
+    const data = { name: 'Lord of the Rings' }
     expect(gen.next(data)).toEqual({
       done: false,
-      value: call(writeFile, "movie.json", JSON.stringify(data, null, 2)),
+      value: call(writeFile, 'movie.json', JSON.stringify(data, null, 2)),
     })
     const val = gen.next()
     expect(val).toEqual({
       done: true,
-      value: "saved movie.json",
+      value: 'saved movie.json',
     })
   })
 })
@@ -374,58 +374,58 @@ testing generators.
 generators.
 
 ```js
-const { call } = require("cofx")
+const { call } = require('cofx')
 const {
   genTester,
   yields,
   throws,
   finishes,
   stepsToBeEqual,
-} = require("gen-tester")
-const fetch = require("node-fetch")
+} = require('gen-tester')
+const fetch = require('node-fetch')
 
 expect.extend({
   stepsToBeEqual,
 })
 
-test("when request is 500 - verbose", () => {
-  const tester = genTester(fetchAndSaveMovie, "1")
+test('when request is 500 - verbose', () => {
+  const tester = genTester(fetchAndSaveMovie, '1')
   const actual = tester(
-    yields(call(fetch, "http://localhost/movies/1"), { status: 500 }),
-    throws(err => err.message === "request unsuccessful"),
-    finishes()
+    yields(call(fetch, 'http://localhost/movies/1'), { status: 500 }),
+    throws((err) => err.message === 'request unsuccessful'),
+    finishes(),
   )
 
   expect(actual).stepsToBeEqual()
 })
 
-describe("when the request is 200 - gen-tester", () => {
-  test("when saving the file fails", () => {
-    const tester = genTester(fetchAndSaveMovie, "1")
+describe('when the request is 200 - gen-tester', () => {
+  test('when saving the file fails', () => {
+    const tester = genTester(fetchAndSaveMovie, '1')
     const resp = { status: 200 }
-    const data = { name: "Lord of the Rings" }
+    const data = { name: 'Lord of the Rings' }
     const actual = tester(
-      yields(call(fetch, "http://localhost/movies/1"), resp),
-      yields(call([resp, "json"]), data),
+      yields(call(fetch, 'http://localhost/movies/1'), resp),
+      yields(call([resp, 'json']), data),
       yields(
-        call(writeFile, "movie.json", JSON.stringify(data, null, 2)),
-        throws("some error")
+        call(writeFile, 'movie.json', JSON.stringify(data, null, 2)),
+        throws('some error'),
       ),
-      finishes("some error")
+      finishes('some error'),
     )
 
     expect(actual).stepsToBeEqual()
   })
 
-  test("when saving the file succeeds", () => {
-    const tester = genTester(fetchAndSaveMovie, "1")
+  test('when saving the file succeeds', () => {
+    const tester = genTester(fetchAndSaveMovie, '1')
     const resp = { status: 200 }
-    const data = { name: "Lord of the Rings" }
+    const data = { name: 'Lord of the Rings' }
     const actual = tester(
-      yields(call(fetch, "http://localhost/movies/1"), resp),
-      yields(call([resp, "json"]), data),
-      call(writeFile, "movie.json", JSON.stringify(data, null, 2)),
-      finishes("saved movie.json")
+      yields(call(fetch, 'http://localhost/movies/1'), resp),
+      yields(call([resp, 'json']), data),
+      call(writeFile, 'movie.json', JSON.stringify(data, null, 2)),
+      finishes('saved movie.json'),
     )
 
     expect(actual).stepsToBeEqual()
@@ -436,14 +436,14 @@ describe("when the request is 200 - gen-tester", () => {
 Don't care about checking all the `call`s for a test?
 
 ```js
-const { genTester, skip, finishes, throws } = require("gen-tester")
+const { genTester, skip, finishes, throws } = require('gen-tester')
 
-test("when request is 500 - verbose", () => {
-  const tester = genTester(fetchAndSaveMovie, "1")
+test('when request is 500 - verbose', () => {
+  const tester = genTester(fetchAndSaveMovie, '1')
   const actual = tester(
     skip({ status: 500 }),
-    throws(err => err.message === "request unsuccessful"),
-    finishes()
+    throws((err) => err.message === 'request unsuccessful'),
+    finishes(),
   )
 
   expect(actual).stepsToBeEqual()

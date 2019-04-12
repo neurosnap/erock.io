@@ -54,11 +54,11 @@
   },
   "scripts": {
     "build": "rm -rf public && rm -rf .cache && gatsby build",
-    "develop": "gatsby develop",
+    "dev": "gatsby develop",
     "upload": "gsutil -m rsync -a public-read -r ./public gs://erock.io",
     "deploy": "yarn build && yarn upload",
-    "format": "prettier --write src/**/*.{js,jsx}",
-    "start": "yarn develop",
+    "format": "prettier --write src/**/*.{js,jsx} content/**/*.md",
+    "start": "yarn dev",
     "serve": "gatsby serve"
   }
 }

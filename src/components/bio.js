@@ -5,17 +5,17 @@
  * See: https://www.gatsbyjs.org/docs/static-query/
  */
 
-import React from "react"
-import { StaticQuery, graphql } from "gatsby"
-import Image from "gatsby-image"
+import React from 'react'
+import { StaticQuery, graphql } from 'gatsby'
+import Image from 'gatsby-image'
 
-import { rhythm } from "../utils/typography"
+import { rhythm } from '../utils/typography'
 
 function Bio() {
   return (
     <StaticQuery
       query={bioQuery}
-      render={data => {
+      render={(data) => {
         const { author, social } = data.site.siteMetadata
         return (
           <div
@@ -32,14 +32,14 @@ function Bio() {
                 marginBottom: 0,
                 width: rhythm(2),
                 height: rhythm(2),
-                borderRadius: "50%",
+                borderRadius: '50%',
               }}
               imgStyle={{
                 borderRadius: `50%`,
               }}
             />
             <p style={{ maxWidth: 310 }}>
-              Personal blog by{" "}
+              Personal blog by{' '}
               <a href={`https://github.com/${social.github}`}>{author}</a> who
               lives and works in Ann Arbor, Michigan.
             </p>
