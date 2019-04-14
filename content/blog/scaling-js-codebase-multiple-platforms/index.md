@@ -1,7 +1,7 @@
 ---
 title: Scaling a react/redux codebase for multiple platforms
-date: '2019-01-15T10:00:00.000Z'
-description: A brief intro on expanding a react web app
+date: '2018-06-15T10:00:00.000Z'
+description: A brief intro on building a large react web app
 ---
 
 In the world of react and redux, there is no shortage of tutorials, to-do apps,
