@@ -5,23 +5,19 @@ description: How to write declarative side-effects
 ---
 
 Testing asynchronous I/O sucks. Interacting with the external world, whether
-it's a remote HTTP server, a database, or the filesystem requires mocking what
-we expect will happen. Sometimes these mocks are rather difficult to construct
-because some functionality was never intended to be mocked. Mocking a
-filesystem, for example, can be difficult to get correctly. Errors that could
-arise from working with the filesystem might not have been conceived when
-building the mock. We also have to consider the idea that mocks are code as well
-and if they were not created properly it wouldn't matter how great our tests
-were because the mock doesn't accurately reflect reality. It also involves
-understanding how that IO behaves in order to test that our function responds
-appropriately.
+it's a database, a remote HTTP server, or the filesystem, it requires mocking
+what we expect will happen. Sometimes these mocks are rather difficult to
+construct because some functionality was never intended to be mocked. We have to
+consider the idea that mocks are code as well and every testing suite has a
+different way to construct them. It also involves understanding how that IO
+behaves in order to understand all of its responses.
 
-When we write tests, we naturally gravitate towards testing the easy pieces of
-code first, which coincidentally are usually the areas that have relatively low
-impact. The urge to test pure functions, like ones that accept a string and
-return another string is strong because they are easy to test. The goal of this
-blog is to demonstrate that some of the most difficult things to test (async IO)
-can become just as easy to test as pure functions.
+When we write tests, we naturally gravitate towards testing the easy sets of
+code first. Coincidentally these are the areas that have relatively low impact.
+The urge to test pure functions, like ones that accept a string and return
+another string without side-effects is strong because they are easy to test. The
+goal of this article is to demonstrate that some of the most difficult things to
+test (async IO) can become just as easy to test as pure functions.
 
 ---
 
@@ -159,11 +155,11 @@ then return data as HTML.
 const view = f(state)
 ```
 
-The functions themselves do not mutate the DOM, they tell the react runtime how
-to mutate the DOM. This is a critical distinction and pivotal for understanding
-how this works. Effectively the end-developer only concerns itself with the
-shape of the data being returned from their react components and the react
-runtime does the rest.
+The **functions** themselves do not _mutate_ the DOM, they tell the **react
+runtime** how to _mutate_ the DOM. This is a critical distinction and pivotal
+for understanding how this works. Effectively the end-developer only concerns
+itself with the shape of the data being returned from their react components and
+the react runtime does the rest.
 
 [cofx](https://github.com/neurosnap/cofx) employs the same concept but for async
 IO operations. This library will allow the end-developer to write declarative
@@ -171,7 +167,7 @@ functions that only return JSON objects. These JSON objects instruct the `cofx`
 runtime how to activate the side-effects.
 
 Instead of `fetchMovie` calling `fetch` and `fs.writeFile` it simply describes
-how to call those functions and `cofx` handles the rest.
+how to call those functions and `cofx` _handles_ the rest.
 
 ---
 
@@ -193,8 +189,8 @@ function* fetchAndSaveMovie(id) {
     throw new Error('request unsuccessful')
   }
 
-  // resp.json() needs proper context `this` from fetch to work which requires
-  // special execution
+  // resp.json() needs proper context `this`
+  // from fetch to work which requires special execution
   const movie = yield call([resp, 'json'])
   const data = JSON.stringify(movie, null, 2)
   const fname = 'movie.json'

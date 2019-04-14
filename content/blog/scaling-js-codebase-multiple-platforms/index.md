@@ -9,26 +9,23 @@ and how-to guides for small web applications. There's a rather steep learning
 curve when trying to deploy a modern web application and when researching how to
 scale and maintain a large one, I found very little discussion on the subject.
 
-Another important fact about the react redux ecosystem is that they are simply
-libraries. Contrary to what people think, react is not a framework; it's a view
-library. That is its strength and also its weakness. For people looking for a
+Contrary to what people think, react is not a framework; it's a view library.
+That is its strength and also its weakness. For people looking for a
 batteries-included web framework to build a single-page application, react only
 satisfies the V in MVC. For small, contained applications this is an incredible
-ally. React doesn't make any assumptions about how a codebase is organized.
-Redux is the same way; the only thing it asks is that the store is immutable.
+ally. React and redux don't make any assumptions about how a codebase is
+organized.
 
 There is no standard for how to organize a react redux application.
-[We cannot even land on a side-effects middleware for it](https://medium.com/magnetis-backstage/redux-side-effects-and-me-89c104a4b149).
+[We cannot even settle on a side-effects middleware for it](https://medium.com/magnetis-backstage/redux-side-effects-and-me-89c104a4b149).
 This has left the react redux ecosystem fragmented. From
 [ducks](https://github.com/erikras/ducks-modular-redux) to rails-style layer
 organization, there is no official recommendation. This lack of standardization
 is not because the problem has been ignored, in fact, the official redux site
 states that
 [it ultimately doesn't matter how you lay out your code on disk](https://redux.js.org/faq/code-structure).
-I could not disagree more with this sentiment and want to provide how a
-developer can scale a react redux application. Whether it is a To-Do app or a
-fully-featured email application, I will argue in this blog post how a developer
-ought to setup their application.
+In this article is to show how I like to build large accplications using react
+and redux.
 
 ---
 
@@ -56,8 +53,8 @@ On a recent project I was responsible for multiple platforms which include but
 are not limited to: web (all major browsers), desktop (windows, mac, linux),
 outlook plugin, chrome extension, and a salesforce app.
 
-I made the decision that all that code should live under one repository. The
-most important reason was for code sharing. I also felt it unnecessary and
+We decided that all that code should live under one repository. The most
+important reason was for code sharing. I also felt it unnecessary and
 unmaintainable to build seven separate repositories.
 
 ### A quick overview
@@ -102,16 +99,14 @@ packages.json
 ### Feature-based folder organization
 
 There are two predominate ways to organize code: layer-based and feature-based
-folder organization. Uncle Bob's words echo through my halls "architecture
-should indicate intent and not implementation." When building an application,
-the top level source code should not look the same for every single application.
-The rails-style MVC folder structure (layer-based) is not a good approach to
-building a large application. Why? One might ask. The main reason for me is it
-muddles each feature together into one application instead of treating them as
-their own entities. Building a new feature in isolation is more difficult when
-each component of a feature needs to join the other features. Using a
-feature-based approach, the new feature can be built in isolation, away from
-everything else and then "hooked up" later when it's finished.
+folder organization. When building an application, the top level source code
+should not look the same for every single application. The rails-style MVC
+folder structure (layer-based) muddles each feature together into one
+application instead of treating them as their own entities. Building a new
+feature in isolation is more difficult when each component of a feature needs to
+join the other features. Using a feature-based approach the new feature can be
+built in isolation, away from everything else and then "hooked up" later when
+it's finished.
 
 Layer-based
 
@@ -144,7 +139,7 @@ src/
 
 ### Every feature is an npm package
 
-This was a recent development that has been extremely successful. I leveraged
+This was a recent development that has been successful for us. We leveraged
 [yarn workspaces](https://yarnpkg.com/blog/2017/08/02/introducing-workspaces/)
 to manage dependencies between features. By developing each feature as a
 package, it allowed us to think of each feature as its own individual unit. It
@@ -155,21 +150,19 @@ discrete contributions to an application.
 #### Absolute imports
 
 It was a nightmare moving code around when using relative imports for all of our
-internal dependencies. In my mind it was a code smell to having an
-infrastructure that did not allow us to move code around easily. Absolute
-imports were a really great feature to leverage. For large applications it is
-imperative to move to an absolutely imported infrastructure when managing
-inter-dependencies.
+internal dependencies. The weight of each file being moved multiplies by the
+number of thing depending on it. Absolute imports were a really great feature to
+leverage. The larger the app, the more common it is to see absolute imports.
 
 #### Lint rules around inter-dependencies
 
 One of the best things about absolute imports was the lint tooling that could be
-built. I used a namespace `@company/<package>` for our imports so it was
+built. We used a namespace `@company/<package>` for our imports so it was
 relatively easy to build lint rules around that consistent naming.
 
 #### Strict package boundaries
 
-This was another :key: to scaling a codebase. Each package had to subscribe to a
+This was another key to scaling a codebase. Each package had to subscribe to a
 consistent API structure. It forces the developer to think about how packages
 are interacting with each other and creates an environment where there is only
 one API that each package is required to maintain.
@@ -181,7 +174,10 @@ file `utils` to `helpers`. By allowing a package to import `utils` directly, we
 inadvertantly broke the API. Another example is when a package is really simple
 and could be encapsulated inside one file. As long as the package has an
 `index.js` file and it exports all of the components that another package needs,
-it doesn't matter how the package is actually organized.
+it doesn't matter how the package is actually organized. It's important for a
+large codebase to have some sort of internal consistency, however, I found
+having some flexbility allows to fit an organization that matches the needs of
+the feature.
 
 Another reason why strict module boundaries is important is to simplify the
 dependency tree. When reaching into a package to grab a submodule, the
