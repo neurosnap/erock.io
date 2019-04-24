@@ -1,5 +1,5 @@
 ---
-title: Simply testing async I/O in javascript
+title: Simplify testing async I/O in javascript
 date: '2019-04-12T10:00:00.000Z'
 description: How to write declarative side-effects
 ---
