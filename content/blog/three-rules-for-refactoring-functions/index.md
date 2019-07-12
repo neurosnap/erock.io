@@ -49,7 +49,7 @@ makes it harder to read and understand. Max indendation is 3.
 
 ```js
 function printMessage(data: ?Data): string {
-  if (!date || (data && !data.date)) {
+  if (!data || (data && !data.date)) {
     return message;
   }
 
@@ -77,11 +77,11 @@ debugging.
 
 ```js
 function printMessage(data: ?Data): string {
-  if (!date) {
+  if (!data) {
     return message;
   }
 
-  if (!date.data) {
+  if (!data.date) {
     return message;
   }
 
