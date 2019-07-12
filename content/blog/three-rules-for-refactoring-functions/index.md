@@ -24,35 +24,49 @@ maintain.
 The general idea is to figure out all the ways to exit a function as quickly as
 possible. This reduces cognitive overhead when reading a function. When trying
 to trace a bug through a system and coming across a function that returns early
-for your use-case there's a sensation of relief: "Ah! Another function I don't
-have to worry about. Move along!"
+for your use-case there's a sensation of relief: "Whew! Another function I don't
+have to worry about." The following example is trivial but it explains the point
+I want to make so try to imagine much more complicated logic when reading these
+examples.
 
 ```js
-function sum(prev, value) {
-  if (value) {
-    return prev + value;
+interface Data {
+  message: string;
+  date: ?Date;
+}
+
+function printMessage(data: ?Data): string {
+  if (data) {
+    if (data.date) {
+      const date = formatDate(data.date);
+      return `${date}: ${message}`;
+    }
   }
 
-  return prev;
+  return message;
 }
 ```
 
-In the above example we are checking to see if the value exists and if it does
-we do the main calculation in the function.
+In the above example we are checking to see if a nested value exists and if it
+does we do the meat of the functionality there. Max indendation is 3.
 
 ```js
-function sum(prev, value) {
-  if (!value) {
-    return prev;
+function printMessage(data: ?Data): string {
+  if (!date || (data && !data.date)) {
+    return message;
   }
 
-  return prev + value;
+  const date = formatDate(data.date);
+  return `${date}: ${message}`;
 }
 ```
 
-Here we check to see if the value doesn't exist and then returns early. This is
-fine for a simple function like this, but what if the primary instructions for
-this function were more complicated?
+Here we check to see if the value doesn't exist and then returns early. Now
+instead of the main meat of the functionality being nested in multiple if
+statements it's in the main body of the function. Why is this a good thing? We
+are figuring out all the ways to not run the main contents of this function
+first and then at the end we worry about doing the actual thing. To me this is
+more readable and easier to understand. Max indentation is 2.
 
 ## Return often
 
@@ -63,6 +77,28 @@ function's code. This rule will prove to be most contentious because returning
 often does have its drawbacks. It makes inspecting the function harder
 especially if you are a developer who heavily relies on log statements for
 debugging.
+
+```js
+function printMessage(data: ?Data): string {
+  if (!date) {
+    return message;
+  }
+
+  if (!date.data) {
+    return message;
+  }
+
+  const date = formatDate(data.date);
+  return `${date}: ${message}`;
+}
+```
+
+As you can see, we have removed some unnecessary logic by creating to early
+returns. Instead of an if statement that has an OR and AND, we have two separate
+negation checks. Max indentation is still 2 and it's easier to read. The
+drawback to this approach is if you print the results of the function, you don't
+know where in the function the result exited because it could be from a few
+places.
 
 ## Reduce levels of nesting
 
