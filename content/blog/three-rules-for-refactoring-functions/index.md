@@ -4,11 +4,6 @@ date: '2019-07-11T10:00:00.000Z'
 description: Simple steps to guarantee cleaner functions
 ---
 
-Should I tease you? Should I write an anecdote about the rules before describing
-them to you? It seems like I should wait until the end of the article to provide
-the rules in a list, right? Nah. Here are the three rules if you want to skip
-the rest of the article:
-
 1. Return early
 2. Return often
 3. Reduce levels of nesting
@@ -144,3 +139,8 @@ most undergraduate discussions when it can in fact be one of the most important
 characteristics of widely used and maintainable code. Code that is only
 understood by one person is code not worth maintaining -- and as a result poorly
 designed.
+
+## Conclusion
+
+These are three rules I think about when writing every single function and I
+firmly believe it has resulted in easier to read code.
