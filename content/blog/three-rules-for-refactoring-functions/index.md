@@ -34,7 +34,7 @@ function printMessage(data: ?Data): string {
   if (data) {
     if (data.date) {
       const date = formatDate(data.date);
-      return `${date}: ${message}`;
+      return `${date}: ${data.message}`;
     }
   }
 
@@ -54,7 +54,7 @@ function printMessage(data: ?Data): string {
   }
 
   const date = formatDate(data.date);
-  return `${date}: ${message}`;
+  return `${date}: ${data.message}`;
 }
 ```
 
@@ -86,7 +86,7 @@ function printMessage(data: ?Data): string {
   }
 
   const date = formatDate(data.date);
-  return `${date}: ${message}`;
+  return `${date}: ${data.message}`;
 }
 ```
 
