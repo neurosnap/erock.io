@@ -43,7 +43,9 @@ function printMessage(data: ?Data): string {
 ```
 
 In the above example we are checking to see if a nested value exists and if it
-does we do the meat of the functionality there. Max indendation is 3.
+does we do the meat of the functionality there. For this example it seems
+innocuous, but the meat of this function is buried in conditional logic that
+makes it harder to read and understand. Max indendation is 3.
 
 ```js
 function printMessage(data: ?Data): string {
@@ -59,9 +61,9 @@ function printMessage(data: ?Data): string {
 Here we check to see if the value doesn't exist and then returns early. Now
 instead of the main meat of the functionality being nested in multiple if
 statements it's in the main body of the function. Why is this a good thing? We
-are figuring out all the ways to not run the main contents of this function
-first and then at the end we worry about doing the actual thing. To me this is
-more readable and easier to understand. Max indentation is 2.
+are figuring out all the ways to **not** run the main contents of this function
+first and then we worry about doing the actual thing. To me this is more
+readable and easier to understand. Max indentation is 2.
 
 ## Return often
 
@@ -88,12 +90,12 @@ function printMessage(data: ?Data): string {
 }
 ```
 
-As you can see, we have removed some unnecessary logic by creating to early
-returns. Instead of an if statement that has an OR and AND, we have two separate
-negation checks. Max indentation is still 2 and it's easier to read. The
-drawback to this approach is if you print the results of the function, you don't
-know where in the function the result exited because it could be from a few
-places.
+As you can see, we have removed some unnecessary logic by creating two early
+returns. Instead of an if statement that has an **OR** and **AND**, we have two
+separate negation checks. Max indentation is still 2 and it's easier to read.
+The drawback to this approach is if you print the results of the function, you
+don't know where in the function the result exited because it could be from a
+few places.
 
 ## Reduce levels of nesting
 
