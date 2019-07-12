@@ -1,14 +1,14 @@
-import React from 'react'
-import { StaticQuery, graphql } from 'gatsby'
+import React from 'react';
+import { StaticQuery, graphql } from 'gatsby';
 
-import { rhythm } from '../utils/typography'
+import { rhythm } from '../utils/typography';
 
 function Footer() {
   return (
     <StaticQuery
       query={footerQuery}
       render={(data) => {
-        const { social } = data.site.siteMetadata
+        const { social } = data.site.siteMetadata;
         return (
           <footer
             style={{
@@ -45,10 +45,10 @@ function Footer() {
               stack overflow
             </a>
           </footer>
-        )
+        );
       }}
     />
-  )
+  );
 }
 
 const footerQuery = graphql`
@@ -63,6 +63,6 @@ const footerQuery = graphql`
       }
     }
   }
-`
+`;
 
-export default Footer
+export default Footer;

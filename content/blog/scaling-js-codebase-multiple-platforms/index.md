@@ -209,11 +209,11 @@ For example:
 
 ```js
 // bad and a lint rule will prevent this
-import { fetchNewsArticle } from '@company/news/action-creators'
+import { fetchNewsArticle } from '@company/news/action-creators';
 
 // good
-import { actionCreators } from '@company/news'
-const { fetchNewsArticle } = actionCreators
+import { actionCreators } from '@company/news';
+const { fetchNewsArticle } = actionCreators;
 ```
 
 This setup came at a cost. Import statements became more verbose as a result of
@@ -275,36 +275,36 @@ state shape they required and what kind of sagas would be triggered.
 
 ```js
 // packages.js
-import use from 'redux-package-loader'
-import sagaCreator from 'redux-saga-creator'
+import use from 'redux-package-loader';
+import sagaCreator from 'redux-saga-creator';
 
 const packages = use([
   require('@company/auth'),
   require('@company/news'),
   require('@company/payment'),
-]) // `use` simply combines all package objects into one large object
+]); // `use` simply combines all package objects into one large object
 
-const rootReducer = combineReducers(packages.reducers)
-const rootSaga = sagaCreator(packages.sagas)
-export { rootReducer, rootSaga }
+const rootReducer = combineReducers(packages.reducers);
+const rootSaga = sagaCreator(packages.sagas);
+export { rootReducer, rootSaga };
 ```
 
 ```js
 // store.js
-import { applyMiddleware, createStore } from 'redux'
-import createSagaMiddleware from 'redux-saga'
+import { applyMiddleware, createStore } from 'redux';
+import createSagaMiddleware from 'redux-saga';
 
 export default ({ initState, rootReducer, rootSaga }) => {
-  const sagaMiddleware = createSagaMiddleware()
+  const sagaMiddleware = createSagaMiddleware();
   const store = createStore(
     rootReducer,
     initState,
     applyMiddleware(sagaMiddleware),
-  )
-  sagaMiddleware.run(rootSaga)
+  );
+  sagaMiddleware.run(rootSaga);
 
-  return store
-}
+  return store;
+};
 ```
 
 ```js
