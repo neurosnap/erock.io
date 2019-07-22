@@ -14,56 +14,98 @@ are certainly cases where they might betray you. Having said that, if you stick
 to these rules _most of the time_ your code will become easier to read and
 maintain.
 
+Let's try to build a function that lets a user sign up for our service:
+
+```js
+interface Response {
+  type: 'success' | 'error';
+  payload: any;
+}
+
+function register(email: string, pass: string): Response {
+  if (isEmailValid(email) && isEmailAvailable(email)) {
+    if (isPassValid(pass)) {
+      const userId = createUser(email, pass);
+      return {
+        type: 'success',
+        payload: { userId },
+      };
+    } else {
+      return {
+        type: 'error',
+        payload: 'password must be 8 characters long',
+      };
+    }
+  } else {
+    return {
+      type: 'error',
+      payload: 'email is invalid',
+    };
+  }
+
+  return {
+    type: 'error',
+    payload: 'unknown error occurred',
+  };
+}
+```
+
+All the named functions are stubs, the actual implementation is irrelevant to
+this demonstration. Before we can create the user, we need to make sure that the
+email and password provided to us are valid and the email address has not
+already been created. There are a couple issues with the current code that can
+be improved. First, the main purpose of the function's code is nested within
+multiple `if-statements`. This makes it harder to understand how a function's
+core responsibility gets activated. Because we want to return meaninful errors
+in this function, we have to create accompanying `else-statements` which are not
+co-located next to the logic that controls them and makes them hard to read. Max
+indendation is 4.
+
 ## Return early
 
 The general idea is to figure out all the ways to exit a function as quickly as
 possible. This reduces cognitive overhead when reading a function. When trying
 to trace a bug through a system and coming across a function that returns early
-for your use-case there's a sensation of relief: "Whew! Another function I don't
-have to worry about." The following example is trivial but it explains the point
-I want to make so try to imagine much more complicated logic when reading these
-examples.
+for your use-case, with it is a sensation of relief, because most of the code
+can be ignored.
 
 ```js
-interface Data {
-  message: string;
-  date: ?Date;
-}
+function register(email: string, pass: string): Response {
+  let error = null;
 
-function printMessage(data: ?Data): string {
-  if (data) {
-    if (data.date) {
-      const date = formatDate(data.date);
-      return `${date}: ${data.message}`;
-    }
+  if (!isEmailValid(email) || !isEmailAvailable(email)) {
+    error = {
+      type: 'error',
+      payload: 'email is invalid',
+    };
+  } else if (!isPassValid(pass)) {
+    error = {
+      type: 'error',
+      payload: 'password must be 8 characters long',
+    };
   }
 
-  return message;
+  if (error) {
+    return error;
+  }
+
+  const userId = createUser(email, pass);
+  return {
+    type: 'success',
+    payload: { userId },
+  };
 }
 ```
 
-In the above example we are checking to see if a nested value exists and if it
-does we do the meat of the functionality there. For this example it seems
-innocuous, but the meat of this function is buried in conditional logic that
-makes it harder to read and understand. Max indendation is 3.
-
-```js
-function printMessage(data: ?Data): string {
-  if (!data || (data && !data.date)) {
-    return message;
-  }
-
-  const date = formatDate(data.date);
-  return `${date}: ${data.message}`;
-}
-```
-
-Here we check to see if the value doesn't exist and then returns early. Now
-instead of the main meat of the functionality being nested in multiple if
-statements it's in the main body of the function. Why is this a good thing? We
-are figuring out all the ways to **not** run the main contents of this function
-first and then we worry about doing the actual thing. To me this is more
-readable and easier to understand. Max indentation is 2.
+This seems better. We have removed the need to read all the code when we know
+our email or pass is invalid. The `if-statement`/`else-statement` separation in
+the previous example is gone: the condition is co-located with the error state.
+Also the primary goal of the function's code is in the main body of the
+function. However, because we are waiting to return until the end of the
+function, we end up with an `if-statement`/`else-if-statement` that is mutating
+a variable to be dealt with later in the function. This requires the developer
+to follow the logic to precisely understand how that variable is getting changed
+over time. Max indentation is 3.
 
 ## Return often
 
@@ -76,26 +118,72 @@ especially if you are a developer who heavily relies on log statements for
 debugging.
 
 ```js
-function printMessage(data: ?Data): string {
-  if (!data) {
-    return message;
+function register(email: string, pass: string): Response {
+  if (!isEmailValid(email) || !isEmailAvailable(email)) {
+    return {
+      type: 'error',
+      payload: 'email is invalid',
+    };
   }
 
-  if (!data.date) {
-    return message;
+  if (!isPassValid(pass)) {
+    return {
+      type: 'error',
+      payload: 'password must be 8 characters long',
+    };
   }
 
-  const date = formatDate(data.date);
-  return `${date}: ${data.message}`;
+  const userId = createUser(email, pass);
+  return {
+    type: 'success',
+    payload: { userId },
+  };
 }
 ```
 
-As you can see, we have removed some unnecessary logic by creating two early
-returns. Instead of an if statement that has an **OR** and **AND**, we have two
-separate negation checks. Max indentation is still 2 and it's easier to read.
-The drawback to this approach is if you print the results of the function, you
-don't know where in the function the result exited because it could be from a
-few places.
+Now we have removed the `else-if-statement` in favor of returning early and
+often. This is clear to understand and at each step of the function we filter
+out parameters that would prevent the core of our function from running.
+However, there is still some improvements we could make. We have an
+`if-statement` that requires two condititions to be met before exiting the
+function. This logic seems straight-forward, but when given the opportunity, I
+almost always split the condition into separate `if-statements`. Another
+side-effect of having one statement handle two conditions is the error messaging
+is a little misleading. Max indentation is 3.
+
+```js
+function register(email: string, pass: string): Response {
+  if (!isEmailValid(email)) {
+    return {
+      type: 'error',
+      payload: 'email is invalid',
+    };
+  }
+
+  if (!isEmailAvailable(email)) {
+    return {
+      type: 'error',
+      payload: 'email is already taken',
+    };
+  }
+
+  if (!isPassValid(pass)) {
+    return {
+      type: 'error',
+      payload: 'password must be 8 characters long',
+    };
+  }
+
+  const userId = createUser(email, pass);
+  return {
+    type: 'success',
+    payload: { userId },
+  };
+}
+```
+
+Using all of the rules we have the final result. This seems readable, traceable
+error messaging, and reduces the level of indentation. Max indentation is 3.
 
 ## Reduce levels of nesting
 
