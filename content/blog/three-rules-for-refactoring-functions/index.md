@@ -212,18 +212,23 @@ Is this example more readable than the previous one? There are definitely some
 positives to this version. It's easier to add more validations because we can
 add the functions to the `validations` array and it should just work. There are
 only two return statements in the function which is less than the previous
-example. However, we have introduced a `for-loop` to iterate over the validation
+example.
+
+However, we have introduced a `for-loop` to iterate over the validation
 functions and we will return if any of those validations fail. Even though this
 function abstracted the concept of validation and is more scalable to adding
 more validations, it strikes me as very dynamic. Also, every function must
 subscribe to handling validations the same way, if they don't, figuring out the
 bug is going to be tricky to figure out because the error is going happen inside
-a `for-loop`. To me, this function is less readable because of its dynamic
-nature. The end-developer now needs to mentally iterate over the `validations`
-array which is a significant amount of cognitive load. At this point it really
-depends on what is more important: readability or scalability. My gut would be
-to use the previous example until it is unbearable to continue to write the
-validation checks one after another.
+a `for-loop`.
+
+To me, this function is less readable because of its dynamic nature. The
+end-developer now needs to mentally iterate over the `validations` array which
+is a significant amount of cognitive load. At this point it really depends on
+what is more important: readability or scalability.
+
+My instincts tell me to use the previous example until it is unbearable to
+continue to write the validation checks one after another.
 
 ## Reduce levels of nesting
 
