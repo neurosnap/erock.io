@@ -8,11 +8,10 @@ description: Simple steps to guarantee cleaner functions
 2. Return often
 3. Reduce levels of nesting
 
-Like most things in life, these are rules with exceptions. The first
-implementation should employ these rules when developing a function but there
-are certainly cases where they might betray you. Having said that, if you stick
-to these rules _most of the time_ your code will become easier to read and
-maintain.
+These rules are the heartbeat to how I write code. Whenever I write a function
+there is nothing more important for readability and maintainability. Whenever I
+approach a function that needs be refactored it's because the function did not
+subscribe to these rules.
 
 Let's try to build a function that lets a user sign up for our service:
 
@@ -56,37 +55,26 @@ email and password provided to us are valid and the email address has not
 already been created. There are a couple issues with the current code that can
 be improved. First, the main purpose of the function's code is nested within
 multiple `if-statements`. This makes it harder to understand how a function's
-core responsibility gets activated. Because we want to return meaninful errors
+core _responsibility_ gets activated. Because we want to return meaninful errors
 in this function, we have to create accompanying `else-statements` which are not
-co-located next to the logic that controls them and makes them hard to read. Max
-indendation is 4.
+co-located next to the logic that controls them and makes them hard to read.
+_Max indendation is 4_.
 
 ## Return early
 
 The general idea is to figure out all the ways to exit a function as quickly as
-possible. This reduces cognitive overhead when reading a function. When trying
-to trace a bug through a system and coming across a function that returns early
-for your use-case, with it is a sensation of relief, because most of the code
-can be ignored.
+possible. This reduces cognitive overhead when reading a function. When you are
+hunting a bug and a function returns early for your use-case, you can move on
+quickly because you avoid the cognitive load required to understand the rest of
+the function.
 
 ```js
 function register(email: string, pass: string): Response {
-  let error = null;
-
-  if (!isEmailValid(email) || !isEmailAvailable(email)) {
-    error = {
+  if (!isEmailValid(email) || !isEmailAvailable(email) || !isPassValid(pass)) {
+    return {
       type: 'error',
-      payload: 'email is invalid',
+      payload: 'validation failed',
     };
-  } else if (!isPassValid(pass)) {
-    error = {
-      type: 'error',
-      payload: 'password must be 8 characters long',
-    };
-  }
-
-  if (error) {
-    return error;
   }
 
   const userId = createUser(email, pass);
@@ -101,21 +89,16 @@ This seems better. We have removed the need to read all the code when we know
 our email or pass is invalid. The `if-statement`/`else-statement` separation in
 the previous example is gone: the condition is co-located with the error state.
 Also the primary goal of the function's code is in the main body of the
-function. However, because we are waiting to return until the end of the
-function, we end up with an `if-statement`/`else-if-statement` that is mutating
-a variable to be dealt with later in the function. This requires the developer
-to follow the logic to precisely understand how that variable is getting changed
-over time. Max indentation is 3.
+function. However, we lost something in this iteration: meaningful error
+messages. We no longer know what piece of validation failed because they are all
+inside one `if-statement`. _Max indentation is 3_.
 
 ## Return often
 
 Don't wait until the end of a function to return. Based on experience, waiting
 until the end to return from a function ends up creating a lot of branching
 logic that a developer has to keep track of in their head when traversing a
-function's code. This rule will prove to be most contentious because returning
-often does have its drawbacks. It makes inspecting the function harder
-especially if you are a developer who heavily relies on log statements for
-debugging.
+function's code.
 
 ```js
 function register(email: string, pass: string): Response {
@@ -141,15 +124,16 @@ function register(email: string, pass: string): Response {
 }
 ```
 
-Now we have removed the `else-if-statement` in favor of returning early and
-often. This is clear to understand and at each step of the function we filter
-out parameters that would prevent the core of our function from running.
-However, there is still some improvements we could make. We have an
-`if-statement` that requires two condititions to be met before exiting the
-function. This logic seems straight-forward, but when given the opportunity, I
-almost always split the condition into separate `if-statements`. Another
-side-effect of having one statement handle two conditions is the error messaging
-is a little misleading. Max indentation is 3.
+Now we have separated the email validation from the password validation and have
+better error messages by returning early and often. This is clear to understand
+and at each step of the function we filter out parameters that would prevent the
+core of our function from running. However, there are still some improvements we
+could make. We have an `if-statement` that requires two condititions to be met
+before exiting the function. This logic seems straight-forward, but when given
+the opportunity, I almost always split the condition into separate
+`if-statements`. Another side-effect of having one statement handle two
+conditions is the error messaging is a little misleading. _Max indentation is
+3_.
 
 ```js
 function register(email: string, pass: string): Response {
@@ -183,7 +167,63 @@ function register(email: string, pass: string): Response {
 ```
 
 Using all of the rules we have the final result. This seems readable, traceable
-error messaging, and reduces the level of indentation. Max indentation is 3.
+error messaging, and reduces the level of indentation. Now it may seem like this
+is lengthier than the other examples, which is true. Lines of code is not really
+a concern to me and is not something I consider a valuable metric to compare
+code for readability. _Max indentation is 3_.
+
+Could we improve this code even more? Let's try to refactor some of the error
+handling by making the validation function return the error message.
+
+## Dynamic returns
+
+```js
+/*
+  We switch the validation functions from returning if the email is valid to
+  returning the error message if the email is not valid. e.g.:
+    isValidEmail(string): boolean -> validateEmail(string): string
+*/
+function register(email: string, pass: string): Response {
+  const validations = [
+    validateEmail(email),
+    validateEmailAvailable(email),
+    validatePass(pass),
+  ];
+
+  for (let i = 0; i < validations.length; i++) {
+    const err = validations[i];
+    if (err) {
+      return {
+        type: 'error',
+        payload: err,
+      };
+    }
+  }
+
+  const userId = createUser(email, pass);
+  return {
+    type: 'success',
+    payload: { userId },
+  };
+}
+```
+
+Is this example more readable than the previous one? There are definitely some
+positives to this version. It's easier to add more validations because we can
+add the functions to the `validations` array and it should just work. There are
+only two return statements in the function which is less than the previous
+example. However, we have introduced a `for-loop` to iterate over the validation
+functions and we will return if any of those validations fail. Even though this
+function abstracted the concept of validation and is more scalable to adding
+more validations, it strikes me as very dynamic. Also, every function must
+subscribe to handling validations the same way, if they don't, figuring out the
+bug is going to be tricky to figure out because the error is going happen inside
+a `for-loop`. To me, this function is less readable because of its dynamic
+nature. The end-developer now needs to mentally iterate over the `validations`
+array which is a significant amount of cognitive load. At this point it really
+depends on what is more important: readability or scalability. My gut would be
+to use the previous example until it is unbearable to continue to write the
+validation checks one after another.
 
 ## Reduce levels of nesting
 
@@ -229,8 +269,3 @@ most undergraduate discussions when it can in fact be one of the most important
 characteristics of widely used and maintainable code. Code that is only
 understood by one person is code not worth maintaining -- and as a result poorly
 designed.
-
-## Conclusion
-
-These are three rules I think about when writing every single function and I
-firmly believe it has resulted in easier to read code.
