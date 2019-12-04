@@ -1,7 +1,7 @@
 ---
-title: Fat effect, skinny reducer
+title: Unofficial redux-saga style-guide
 date: '2019-12-25T10:00:00.000Z'
-description: The delicate dance between reducers and side-effects
+description: Recommended rules for building web apps with redux-saga
 ---
 
 Redux recently updated their
