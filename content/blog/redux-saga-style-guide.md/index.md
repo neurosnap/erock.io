@@ -324,14 +324,15 @@ export const sagas = {
 
 #### Rules
 
-1. _May_ export named `reducers` which is an object where keys are the reducer
+1. _May_ contain multiple slices
+2. _May_ export named `reducers` which is an object where keys are the reducer
    name and the value is the reducer.
-2. _May_ export named `sagas` which is an object containing sagas that should be
+3. _May_ export named `sagas` which is an object containing sagas that should be
    mounted when creating store.
-3. _May_ export actions to hit reducers or sagas
-4. _May_ export selectors for data from reducer or parent data
-5. _Must_ prefix selectors with `select`
-6. _Must_ prefix getting data from API with `fetch`
+4. _May_ export actions to hit reducers or sagas
+5. _May_ export selectors for data from reducer or parent data
+6. _Must_ prefix selectors with `select`
+7. _Must_ prefix getting data from API with `fetch`
 
 The rules revolve around creating a consistent API for interacting with reducers
 and sagas.
