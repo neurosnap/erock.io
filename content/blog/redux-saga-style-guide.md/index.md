@@ -20,8 +20,8 @@ how to build an app successfully. Any `strong recommendations` from the official
 style-guide requires an equally strong reason for going against it.
 
 In this article I will go through the recommendations that I think are
-contentious and discuss the pros and cons for each one. I also want to put forth
-some addenda when using `redux-saga`.
+contentious and I want to put forth some recommendations when using
+`redux-saga`.
 
 ## Critique
 
@@ -92,7 +92,7 @@ like `redux-saga`, sagas can also listen for those actions and activate even
 more side-effects. Generally speaking, I try to only let sagas listen for events
 (react-side), not my setters.
 
-## Redux-saga style-guide
+## Saga style-guide
 
 Take the `redux` style-guide, remove the ones listed above, and add these for my
 unofficial `redux-saga` style-guide.
@@ -101,16 +101,27 @@ unofficial `redux-saga` style-guide.
 
 Redux is an object that should be thought of like a database. Reducer slices are
 database tables. We should reduce boilerplate with slice helpers
-[robodux](https://github.com/neurosnap/robodux#slice-helpers) or
-[slice-helpers](https://github.com/neurosnap/slice-helpers) by leveraging new
+([robodux](https://github.com/neurosnap/robodux#slice-helpers) or
+[slice-helpers](https://github.com/neurosnap/slice-helpers)) by leveraging new
 _officially_ sanctioned helpers like `createSlice`.
 
 We don't even need to test our reducers anymore because these libraries already
 did that for us.
 
-This makes reducers predictable, isn't that one of the taglines for redux:
+This makes reducers predictable, isn't that one of the taglines for redux? A
 `predictable` state container? Reducers are simplified, and slice helpers cover
 90% of our use cases, because we are treating them like database tables.
+
+### Build indexes for your db tables
+
+Need to have a sorted list of entities? Need to group a subset of entities?
+Create a reducer that acts like an index.
+
+Yes, it feels like we are rebuilding a database, but it's not that much work and
+the manual process allows for performance tweaking which is required when build
+a large application.
+
+TODO: add code sample
 
 ### UI dispatches events, effects dispatch events and setters
 
