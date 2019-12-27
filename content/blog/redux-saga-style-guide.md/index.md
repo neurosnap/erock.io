@@ -9,8 +9,10 @@ Redux recently updated their
 some standard practices on how to organize state management using redux. I think
 this is an important step to create a platform for further discussions. I found
 myself agreeing with most of the recommendations, but there are a few that I
-disagree with. I think a primary reason why I disagree with the official
+disagree with. I think the primary reason why I disagree with the official
 style-guide is because virtually every project I use is built with `redux-saga`.
+`redux-thunk` is rarely the right choice except for very small react
+applications.
 
 As a software engineer that builds a lot of front-end apps with other engineers,
 it's vitally important that when we build an app we make it readable and
@@ -30,11 +32,18 @@ contentious and I want to put forth some recommendations when using
 - https://redux.js.org/style-guide/style-guide#put-as-much-logic-as-possible-in-reducers
 
 I built a large app that originally placed a lot of logic inside reducers. This
-resulted in spaghetti code that was difficult to maintain. Reducers would listen
-to actions that were similar, but because the payloads were slightly different
-they couldn't easily be abstracted into the same function. In general, I think
-having reducers hold a lot of logic makes that logic easy to test but difficult
-to maintain, generalize, and refactor over time.
+resulted in spaghetti code that was difficult to maintain:
+
+- In order to understand what an action is doing, the developer needs to grep
+  for all occurrences of the action type and then piece together the logic.
+- Reducers would listen to actions that were similar, but because the payloads
+  were slightly different they couldn't easily be abstracted into the same
+  functionality, causing duplicated code.
+- I have regularly run into situations where a reducer needed access to other
+  slice data that is not easily available inside of a reducer slice.
+
+In general, I think having reducers hold a lot of logic makes that logic easy to
+test but difficult to maintain, generalize, and refactor over time.
 
 ### Model actions as events not setters
 
@@ -66,16 +75,13 @@ My hot take is that I think there should be a 1:1 mapping between actions and
 reducers. Reducers should own the actions (via `createSlice`) and only under
 rare exceptions should a reducer listen to outside actions.
 
-Employing this method `redux` becomes a very thin layer of setters to hold data
+Employing this method, `redux` becomes a very thin layer of setters to hold data
 and tell `react` when state has changed. To me, the real value of redux is:
 
 - One structured way to update state
 - A single source of truth that our UI _reacts_ to
 - With `react-redux` synchronizing UI with state is handled automatically
 - Reducers are pure functions that are easy to test
-
-I'll agree that putting more logic into reducers makes it easier to test, but
-I'll also argue that it makes it more difficult to maintain and understand.
 
 ### Avoid dispatching many actions sequentially
 
@@ -90,57 +96,35 @@ throughout the codebase. The logic is broken up which makes the flow of what is
 happening harder to understand. What compounds this even worse, with libraries
 like `redux-saga`, sagas can also listen for those actions and activate even
 more side-effects. Generally speaking, I try to only let sagas listen for events
-(react-side), not my setters.
+(react-side), not my setters to avoid errant infinite loops.
+
+The counter-argument regularly cited is that sequential dispatches could trigger
+multiple react re-renders. This is because each action sequentially hits the
+root reducer and could return a new version of the state, triggering an update
+event. `redux` could have allowed for an array of actions to be dispatched, but
+that was ultimately [rejected](https://github.com/reduxjs/redux/pull/1813).
+Because of this, developers are now required to use
+[redux-batched-actions](https://github.com/tshelburne/redux-batched-actions). I
+think it should have been part of the API and if they were rebuilding from
+scratch, it would be an included feature, but I also agree with their PoV: it
+could make a lot of people unhappy and there's a userland library that makes it
+work. Regardless, this suggestion and argument revolving around performance is
+really because the redux API does not support dispatching an array of actions.
 
 ## Saga style-guide
 
 Take the `redux` style-guide, remove the ones listed above, and add these for my
 unofficial `redux-saga` style-guide.
 
-### Reducers as setters
-
-Redux is an object that should be thought of like a database. Reducer slices are
-database tables. We should reduce boilerplate with slice helpers
-([robodux](https://github.com/neurosnap/robodux#slice-helpers) or
-[slice-helpers](https://github.com/neurosnap/slice-helpers)) by leveraging new
-_officially_ sanctioned helpers like `createSlice`.
-
-We don't even need to test our reducers anymore because these libraries already
-did that for us.
-
-This makes reducers predictable, isn't that one of the taglines for redux? A
-`predictable` state container? Reducers are simplified, and slice helpers cover
-90% of our use cases, because we are treating them like database tables.
-
-### Build indexes for your db tables
-
-Need to have a sorted list of entities? Need to group a subset of entities?
-Create a reducer that acts like an index.
-
-Yes, it feels like we are rebuilding a database, but it's not that much work and
-the manual process allows for performance tweaking which is required when build
-a large application.
-
-TODO: add code sample
-
-### UI dispatches events, effects dispatch events and setters
-
-When `react` dispatches actions, it should dispatch events, like the `redux`
-style-guide recommends.
-
-When effects like sagas dispatch actions, it can dispatch events and setters.
-This still provides some traceability and helps centralize business logic into
-one layer.
-
 ### Effects as central processing unit
 
 Most of my arguments revolve around using effects as the primary location for
-business logic. Whenever I build a react/redux app, beyond the simplest app, I
-need something more powerful, maintainable than `redux-thunk`. `redux-toolkit`
+business logic. Whenever I build a react/redux app, beyond the simplest of them,
+I need something more powerful, maintainable than `redux-thunk`. `redux-toolkit`
 endorses using `redux-thunk` and only under special circumstances should we
-reach for something more powerful like `redux-saga`. Personally, I think this is
-misguided. I understand that `redux-thunk` is a simple addition (you could
-inline it easily) with only
+reach for something more powerful like `redux-saga`. Personally, I think this
+should be the opposite. I understand that `redux-thunk` is a simple addition
+(you could inline it easily) with only
 [14 lines of code](https://github.com/reduxjs/redux-thunk/blob/master/src/index.js)
 but that's kind of my point. Redux has always struggled with one of the most
 important parts of building a web app: side-effects. To be honest I actually
@@ -171,6 +155,78 @@ possible.
 
 I wrote an entire article on
 [testing with generators](https://erock.io/simplify-testing-async-io-javascript/)
+
+### Reducers as setters
+
+Redux is an object that should be thought of like a database. Reducer slices are
+database tables. We should reduce boilerplate with slice helpers
+([robodux](https://github.com/neurosnap/robodux#slice-helpers) or
+[slice-helpers](https://github.com/neurosnap/slice-helpers)) by leveraging new
+_officially_ sanctioned helpers like `createSlice`.
+
+We don't even need to test our reducers anymore because these libraries already
+did that for us.
+
+This makes reducers predictable, isn't that one of the taglines for redux? A
+`predictable` state container? Reducers are simplified, and slice helpers cover
+90% of our use cases, because we are treating them like database tables.
+
+### Build indexes for your db tables
+
+Need to have a sorted list of entities that come from an API? Need to group a
+subset of entities? First try to create a selector for it. If we need to
+preserve the order the API sent us then we can create a reducer `EntityId[]`
+that acts like an index.
+
+Yes, it feels like we are rebuilding a database, but it's not that much work and
+the manual process allows for performance tweaking which is desirable when
+building a large application.
+
+```js
+import { call, put } from 'redux-saga/effects';
+import { mapSlice, assignSlice } from 'robodux';
+import { batchActions } from 'redux-batched-actions';
+
+interface Article = {
+  title: string;
+  post: string;
+  author: string;
+}
+
+interface ArticleMap {
+  [key: string]: Article;
+}
+
+// hashmap to store all articles for easy id lookup
+const articles = mapSlice<ArticleMap>({ name: 'articles' });
+const { set: setArticles } = articles.actions;
+// sorted array of article ids that we receive from the API
+const articleOrder = assignSlice<string[]>({ name: 'articleOrder' });
+const { set: setArticleOrder } = articleOrder.actions;
+
+function* onFetchArticles() {
+  const response = yield call(fetch, '/articles');
+  const articles: Article[] = yield call([response, 'json']);
+  const articleOrder = articles.map((article) => article.id);
+  const articleMap = articles.reduce<ArticleMap>((acc, article) => {
+    acc[article.id] = article;
+    return acc;
+  }, {});
+
+  yield put(
+    batchActions([setArticles(articleMap), setArticleOrder(articleOrder)]),
+  );
+}
+```
+
+### UI dispatches events, effects dispatch events and setters
+
+When `react` dispatches actions, it should dispatch events, like the `redux`
+style-guide recommends.
+
+When effects like sagas dispatch actions, it can dispatch events and setters.
+This still provides some traceability and helps centralize business logic into
+one layer.
 
 ### The robodux pattern
 
