@@ -1,5 +1,5 @@
 ---
-title: Unofficial redux-saga style-guide
+title: Redux-saga style-guide
 date: '2019-12-25T10:00:00.000Z'
 description: Recommended rules for building web apps with redux-saga
 ---
@@ -49,17 +49,16 @@ test but difficult to maintain, generalize, and refactor over time.
 
 - https://redux.js.org/style-guide/style-guide#model-actions-as-events-not-setters
 
-This one I kind of agree with. In a perfect world, I agree with this
-recommendation because it does make the event log easier to read. It will also
-make time travel debugging -- something I don't find useful -- easier to perform
-because there would theoretically be fewer actions dispatched and they are more
-traceable to find what triggered them.
+Theoretically I agree with this one because it does make the event log easier to
+read. It will also make time travel debugging -- something I don't find useful
+-- easier to perform because there would be fewer actions dispatched and they
+are more traceable to find what triggered them.
 
 However, in practice, I take a hybrid approach. When actions are being
 dispatched from react, use events. When actions are dispatched from sagas
 (effects), use setters. This will make an action traceable (find the source of
-where the action was called) and reducers being maintainable, composable, and
-generic containers of data. This is how I view reducers. Reducers don't hold
+where the action was called) and reducers become generic containers of data that
+are maintainable, composable. This is how I view reducers: they don't hold
 logic, they are a database table.
 
 Thinking of reducer slices as database tables provides clarity and consistency
@@ -76,27 +75,33 @@ reducers. Reducers should own the actions (via `createSlice`) and only under
 rare exceptions should a reducer listen to outside actions.
 
 Employing this method, `redux` becomes a very thin layer of setters to hold data
-and tell `react` when state has changed. To me, the real value of redux is:
+and tell `react` when state has changed. I know this point of view is
+[controversial](https://twitter.com/dan_abramov/status/800310164792414208) and
+normally when it comes to building apps as part of a time I don't like to go
+against the standards, but this really is being driven by my experience building
+large scale web applications with a team of engineers.
+
+To me, the real value of redux is:
 
 - One structured way to update state
 - A single source of truth that our UI _reacts_ to
 - With `react-redux` synchronizing UI with state is handled automatically
-- Reducers are pure functions that are easy to test
+- Reducers are pure, synchronous functions that are easy to understand
 
 ### Avoid dispatching many actions sequentially
 
 - https://redux.js.org/style-guide/style-guide#avoid-dispatching-many-actions-sequentially
 
-I want a list of steps that demonstrate how redux is being updated. What I don't
-want to do is grep all the reducers for an action type to see how my state is
-being updated. This is especially annoying when employing a modular,
-feature-based folder structure. We have replaced a single function that
-centralized business logic into a composition of functions that are scattered
-throughout the codebase. The logic is broken up which makes the flow of what is
-happening harder to understand. What compounds this even worse, with libraries
-like `redux-saga`, sagas can also listen for those actions and activate even
-more side-effects. Generally speaking, I try to only let sagas listen for events
-(react-side), not my setters to avoid errant infinite loops.
+I want a list of steps that demonstrate how redux is being updated ideally in
+the same function. What I don't want to do is grep all the reducers for an
+action type to see how my state is being updated. This is especially annoying
+when employing a modular, feature-based folder structure. We have replaced a
+single function that centralized business logic into a composition of functions
+that are scattered throughout the codebase. The logic is broken up which makes
+the flow of what is happening harder to understand. What compounds this even
+worse, with libraries like `redux-saga`, sagas can also listen for those actions
+and activate even more side-effects. Generally speaking, I try to only let sagas
+listen for events (react-side), not my setters to avoid errant infinite loops.
 
 The counter-argument regularly cited is that sequential dispatches could trigger
 multiple react re-renders. This is because each action sequentially hits the
@@ -107,31 +112,32 @@ Because of this, developers are now required to use
 [redux-batched-actions](https://github.com/tshelburne/redux-batched-actions). I
 think it should have been part of the API and if they were rebuilding from
 scratch, it would be an included feature, but I also agree with their PoV: it
-could make a lot of people unhappy and there's a userland library that makes it
+could make a lot of people unhappy and there's a user-land library that makes it
 work. Regardless, this suggestion and argument revolving around performance is
 really because the redux API does not support dispatching an array of actions.
+If I could add one thing to the redux API it would probably be that.
 
 ## Saga style-guide
 
 Take the `redux` style-guide, remove the ones listed above, and add these for my
 unofficial `redux-saga` style-guide.
 
-### Effects as central processing unit
+### Effects as the central processing unit
 
 Most of my arguments revolve around using effects as the primary location for
 business logic. Whenever I build a react/redux app, beyond the simplest of them,
-I need something more powerful, maintainable than `redux-thunk`. `redux-toolkit`
-endorses using `redux-thunk` and only under special circumstances should we
-reach for something more powerful like `redux-saga`. Personally, I think this
-should be the opposite. I understand that `redux-thunk` is a simple addition
-(you could inline it easily) with only
+I need something more powerful and maintainable than `redux-thunk`.
+`redux-toolkit` endorses using `redux-thunk` and only under special
+circumstances should we reach for something more powerful like `redux-saga`.
+Personally, I think this should be the opposite. I understand that `redux-thunk`
+is a simple addition (you could inline it easily) with only
 [14 lines of code](https://github.com/reduxjs/redux-thunk/blob/master/src/index.js)
 but that's kind of my point. Redux has always struggled with one of the most
 important parts of building a web app: side-effects. To be honest I actually
 think this is a positive for `redux` because it manages state, not side-effects.
-Use another tool to solve side-effects. Even Dan admits (TODO: find twitter
-link) that he was hoping that `redux-thunk` would be replaced by something built
-by the community.
+Use another tool to solve side-effects. Even Dan
+[admits](https://twitter.com/dan_abramov/status/800105879290912768) that he was
+hoping that `redux-thunk` would be replaced by something built by the community.
 
 To me, there's no real debate: use `redux-saga`. I understand why it cannot be
 officially sanctioned: because for simple todo apps -- something the js
@@ -141,7 +147,7 @@ I get it, but beyond anything simple, you _need_ something more powerful.
 Yes, there's a learning curve, the same can be said for `redux` and yet we all
 still recommend it. `redux-saga` uses ES6 generators, they are not that
 difficult to grok, and are part of the language. If you are an engineer, it is
-your responsibility to learn language features.
+your responsibility to learn all language features.
 
 Testing sagas are one of its greatest assets. It is the main reason I prefer
 generators over async/await. Testing generators are so amazing I try to leverage
@@ -153,7 +159,7 @@ There is not a good story for testing thunks and if we care about testing code
 as professional software engineers then we need to make testing as easy as
 possible.
 
-I wrote an entire article on
+Interested to learn more? I wrote a separate article on
 [testing with generators](https://erock.io/simplify-testing-async-io-javascript/)
 
 ### Reducers as setters
@@ -180,9 +186,10 @@ that acts like an index.
 
 Yes, it feels like we are rebuilding a database, but it's not that much work and
 the manual process allows for performance tweaking which is desirable when
-building a large application.
+building a large application. To put it simply: building your own indexes
+scales.
 
-```js
+```ts
 import { call, put } from 'redux-saga/effects';
 import { mapSlice, assignSlice } from 'robodux';
 import { batchActions } from 'redux-batched-actions';
@@ -236,7 +243,7 @@ extremely well with `redux-saga` and this style-guide.
 
 The anatomy of a package:
 
-```js
+```ts
 // this package is called `people`.  It manages all the people being added to our
 // system.
 import { call, put, takeEvery } from 'redux-saga/effects';
@@ -258,7 +265,8 @@ import { setLoaderStart, setLoaderError, setLoaderSuccess } from '@app/loader';
 
 // creating an entity with sane defaults is very useful when you want your app
 // to always expect some structure.  This helps reduce the need for existential
-// checks.  I use them everywhere.
+// checks.  I use them everywhere.  These are also very useful for writing
+// tests that care about type safety.
 export const defaultPerson = (p: Partial<Person> = {}): Person => {
   const now = new Date().toISOString();
   return {
@@ -275,12 +283,7 @@ export const defaultPerson = (p: Partial<Person> = {}): Person => {
 // a mapSlice is a slice helper for create a db table like structure:
 // the key is the entity id and the value is the object
 const name = 'people';
-const people =
-  mapSlice <
-  PeopleMap >
-  {
-    name,
-  };
+const people = mapSlice<PeopleMap>({ name });
 
 // These are the actions for manage the data inside the people reducer.
 // add -> add entities to db table
@@ -335,7 +338,7 @@ function transformPerson(p: PersonResponse): Person {
 }
 
 // action to fetch people
-export const fetchPeople = createAction < string > 'FETCH_PEOPLE';
+export const fetchPeople = createAction<string>('FETCH_PEOPLE');
 
 // where all of our business logic goes for fetching/storing people
 function* onFetchPeople(action: Action<string>) {
@@ -355,14 +358,12 @@ function* onFetchPeople(action: Action<string>) {
     return;
   }
 
-  const curPeople =
-    resp.data.people.map(transformPerson).reduce <
-    PeopleMap >
-    ((acc, person) => {
+  const curPeople = resp.data.people
+    .map(transformPerson)
+    .reduce<PeopleMap>((acc, person) => {
       acc[person.id] = person;
       return acc;
-    },
-    {});
+    }, {});
 
   // use `batchActions` to silence any arguments against sequential dispatches
   yield put(batchActions([addPeople(curPeople), setLoaderSuccess()]));
