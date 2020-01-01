@@ -1,6 +1,6 @@
 ---
 title: Redux-saga style-guide
-date: '2019-12-25T10:00:00.000Z'
+date: '2020-01-01T00:00:00.000Z'
 description: Recommended rules for building web apps with redux-saga
 ---
 
@@ -9,13 +9,17 @@ Redux recently updated their
 some standard practices on how to organize state management using redux. I think
 this is an important step to create a platform for further discussions. I found
 myself agreeing with most of the recommendations, but there are a few that I
-disagree with. I think the primary reason why I disagree with the official
-style-guide is because virtually every project I use is built with `redux-saga`.
-`redux-thunk` is rarely the right choice except for very small react
-applications.
+disagree with. I think the primary reason why I disagree with the style-guide is
+because virtually every project I use is built with `redux-saga` and the `redux`
+maintainers overall do not consider `redux-saga` a good choice so make no
+recommendations for it. From my perspective, `redux-thunk` is rarely the right
+choice except for very small react applications which I think is where most of
+the divide is coming from. Neither thoughts about how to build a `redux` app are
+wrong, these are diverging opinions because of the different libraries we are
+using.
 
 As a software engineer that builds a lot of front-end apps with other engineers,
-it's vitally important that when we build an app we make it readable and
+it's vitally important that _when_ we build an app, we make it readable and
 maintainable. Official recommendations are the north star for software engineers
 because it is the culmination of years of experience and it sets a baseline for
 how to build an app successfully. Any `strong recommendations` from the official
@@ -77,31 +81,33 @@ rare exceptions should a reducer listen to outside actions.
 Employing this method, `redux` becomes a very thin layer of setters to hold data
 and tell `react` when state has changed. I know this point of view is
 [controversial](https://twitter.com/dan_abramov/status/800310164792414208) and
-normally when it comes to building apps as part of a time I don't like to go
+normally when it comes to building apps as part of a team I don't like to go
 against the standards, but this really is being driven by my experience building
 large scale web applications with a team of engineers.
 
 To me, the real value of redux is:
 
+- A single global state object that is easily accessible through entire codebase
 - One structured way to update state
 - A single source of truth that our UI _reacts_ to
 - With `react-redux` synchronizing UI with state is handled automatically
-- Reducers are pure, synchronous functions that are easy to understand
 
 ### Avoid dispatching many actions sequentially
 
 - https://redux.js.org/style-guide/style-guide#avoid-dispatching-many-actions-sequentially
 
 I want a list of steps that demonstrate how redux is being updated ideally in
-the same function. What I don't want to do is grep all the reducers for an
-action type to see how my state is being updated. This is especially annoying
-when employing a modular, feature-based folder structure. We have replaced a
-single function that centralized business logic into a composition of functions
-that are scattered throughout the codebase. The logic is broken up which makes
-the flow of what is happening harder to understand. What compounds this even
-worse, with libraries like `redux-saga`, sagas can also listen for those actions
-and activate even more side-effects. Generally speaking, I try to only let sagas
-listen for events (react-side), not my setters to avoid errant infinite loops.
+the same function. What I don't want is to grep all the reducers for an action
+type to see how my state is being updated. This is especially annoying when
+employing a modular, feature-based folder structure. We have replaced a single
+function that centralizes business logic into a composition of functions that
+are scattered throughout the codebase. The logic is broken up which makes the
+flow of what is happening harder to understand. What compounds this even worse,
+with libraries like `redux-saga`, sagas can also listen for those actions and
+activate even more side-effects.
+
+_Aside: I try to only let sagas listen for events (react-side), not my setters
+to avoid errant infinite loops._
 
 The counter-argument regularly cited is that sequential dispatches could trigger
 multiple react re-renders. This is because each action sequentially hits the
@@ -110,12 +116,13 @@ event. `redux` could have allowed for an array of actions to be dispatched, but
 that was ultimately [rejected](https://github.com/reduxjs/redux/pull/1813).
 Because of this, developers are now required to use
 [redux-batched-actions](https://github.com/tshelburne/redux-batched-actions). I
-think it should have been part of the API and if they were rebuilding from
-scratch, it would be an included feature, but I also agree with their PoV: it
-could make a lot of people unhappy and there's a user-land library that makes it
-work. Regardless, this suggestion and argument revolving around performance is
-really because the redux API does not support dispatching an array of actions.
-If I could add one thing to the redux API it would probably be that.
+think it should have been part of the API and if I were rebuilding `redux` from
+scratch, it would be an included feature, but I also agree with their
+perspective: it could make a lot of people unhappy and there's a user-land
+library that makes it work all the same. Regardless, this suggestion and
+argument revolving around performance is really because the redux API does not
+support dispatching an array of actions. If I could add one thing to the redux
+API it would probably be that.
 
 ## Saga style-guide
 
@@ -177,6 +184,15 @@ This makes reducers predictable, isn't that one of the taglines for redux? A
 `predictable` state container? Reducers are simplified, and slice helpers cover
 90% of our use cases, because we are treating them like database tables.
 
+### UI dispatches events, effects dispatch events and setters
+
+When `react` dispatches actions, it should dispatch events, like the `redux`
+style-guide recommends.
+
+When effects like sagas dispatch actions, it can dispatch events and setters.
+This still provides some traceability and helps centralize business logic into
+one layer.
+
 ### Build indexes for your db tables
 
 Need to have a sorted list of entities that come from an API? Need to group a
@@ -186,8 +202,9 @@ that acts like an index.
 
 Yes, it feels like we are rebuilding a database, but it's not that much work and
 the manual process allows for performance tweaking which is desirable when
-building a large application. To put it simply: building your own indexes
-scales.
+building a large application. You will also have to maintain both reducers
+together. This might sound tedious or prone to errors but in reality these two
+reducers are coupled by our effects, so it's not that difficult.
 
 ```ts
 import { call, put } from 'redux-saga/effects';
@@ -214,7 +231,9 @@ const { set: setArticleOrder } = articleOrder.actions;
 function* onFetchArticles() {
   const response = yield call(fetch, '/articles');
   const articles: Article[] = yield call([response, 'json']);
+  // preserve order from API
   const articleOrder = articles.map((article) => article.id);
+  // build hashmap of articles (normalize) for easier lookup and update
   const articleMap = articles.reduce<ArticleMap>((acc, article) => {
     acc[article.id] = article;
     return acc;
@@ -225,15 +244,6 @@ function* onFetchArticles() {
   );
 }
 ```
-
-### UI dispatches events, effects dispatch events and setters
-
-When `react` dispatches actions, it should dispatch events, like the `redux`
-style-guide recommends.
-
-When effects like sagas dispatch actions, it can dispatch events and setters.
-This still provides some traceability and helps centralize business logic into
-one layer.
 
 ### The robodux pattern
 
