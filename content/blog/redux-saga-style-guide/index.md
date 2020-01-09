@@ -10,13 +10,10 @@ some standard practices on how to organize state management using redux. I think
 this is an important step to create a platform for further discussions. I found
 myself agreeing with most of the recommendations, but there are a few that I
 disagree with. I think the primary reason why I disagree with the style-guide is
-because virtually every project I use is built with `redux-saga` and the `redux`
-maintainers overall do not consider `redux-saga` a good choice so make no
-recommendations for it. From my perspective, `redux-thunk` is rarely the right
-choice except for very small react applications which I think is where most of
-the divide is coming from. Neither thoughts about how to build a `redux` app are
-wrong, these are diverging opinions because of the different libraries we are
-using.
+because virtually every project I use is built with `redux-saga`. From my
+perspective, `redux-thunk` is rarely the right choice except for very small
+react applications. Neither arguments building a `redux` app are wrong, they are
+looking at redux from different ways to manage side-effects.
 
 As a software engineer that builds a lot of front-end apps with other engineers,
 it's vitally important that _when_ we build an app, we make it readable and
