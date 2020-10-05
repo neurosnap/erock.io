@@ -6,6 +6,7 @@ module.exports = {
     siteUrl: `https://erock.io`,
     social: {
       github: `neurosnap`,
+      github: `neurosnap`,
       stackoverflow: `https://stackoverflow.com/users/1713216/neurosnap`,
       email: `me@erock.io`
     },

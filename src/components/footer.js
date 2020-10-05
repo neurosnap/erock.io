@@ -56,7 +56,7 @@ const footerQuery = graphql`
     site {
       siteMetadata {
         social {
-          twitter
+          email
           github
           stackoverflow
         }
