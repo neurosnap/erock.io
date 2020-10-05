@@ -5,9 +5,9 @@ module.exports = {
     description: `A blog by Eric Bower`,
     siteUrl: `https://erock.io`,
     social: {
-      twitter: `neurosnap`,
       github: `neurosnap`,
       stackoverflow: `https://stackoverflow.com/users/1713216/neurosnap`,
+      email: `me@erock.io`
     },
   },
   pathPrefix: '/',

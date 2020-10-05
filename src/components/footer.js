@@ -22,11 +22,11 @@ function Footer() {
               </a>
             </div>
             <a
-              href={`https://mobile.twitter.com/${social.twitter}`}
+              href={`mailto:${social.email}`}
               target="_blank"
               rel="noopener noreferrer"
             >
-              twitter
+             email 
             </a>{' '}
             &bull;{' '}
             <a
