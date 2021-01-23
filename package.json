@@ -55,7 +55,7 @@
   "scripts": {
     "build": "rm -rf public && rm -rf .cache && gatsby build",
     "dev": "gatsby develop",
-    "upload": "gsutil -m rsync -a public-read -r ./public gs://erock.io",
+    "upload": "gsutil -m -h 'Cache-Control:private, max-age=0, no-transform' rsync -a public-read -r ./public gs://erock.io",
     "deploy": "yarn build && yarn upload",
     "format": "prettier --write src/**/*.{js,jsx} content/**/*.md",
     "start": "yarn dev",
