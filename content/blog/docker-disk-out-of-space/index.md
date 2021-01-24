@@ -6,14 +6,15 @@ description:
 ---
 
 **tl;dr: If you are deploying docker containers to production, be sure to run
-`docker system prune -f` before pulling new images.**
+`docker system prune -f` before pulling new images so you don't run out of disk
+space.**
 
 When I'm building a new project, I generally learn towards using
 [docker compose](https://docs.docker.com/compose/) during development. When
 coupled with [docker machine](https://docs.docker.com/machine/) I have a quick
 and easy way to deploy my containers to the cloud provider of my choice.
 Overall, it works really well, but there's one important thing to consider when
-using docker for development and production: running out of disk space.
+using docker for production: running out of disk space.
 
 Images, containers, networks, and volumes will continue to grow on a production
 VM which will inevitably lead to the hard drive running out of memory. This
@@ -36,7 +37,7 @@ deployment process:
   containers with the new images
 
 This process works great. I don't need to setup CI for a new project but it
-still provides me with the flexability to deploy to my own VM and inspect its
+still provides me with the flexibility to deploy to my own VM and inspect its
 health with docker.
 
 # The problem
@@ -44,7 +45,7 @@ health with docker.
 Things are working great, I'm iterating on feature development and deploying in
 between major changes. Only, the last deploy I tried to perform failed. The
 reason: hard drive is out of space. Hmm, my VM has 16GB of diskspace, why is it
-out of memory? I can see my containers only total maybe 1GB.
+out of memory?
 
 When I run `docker system df` the problem becomes clear: I have unused images
 soaking up all of my hard drive space. I have scoured docker deployment
@@ -60,16 +61,15 @@ Before I pull my new images in production, I run another command:
 docker system prune -f
 ```
 
-You can read the documentation on this
+You can read the documentation about this
 [command here](https://docs.docker.com/engine/reference/commandline/system_prune/).
 Once I added that to my deployment step, things are working much more smoothly.
 
 # Conclusion
 
-This seems really obvious: when docker caches the different layers of images, it
-leaves behind those layers to be reused. However, when we make changes to the
-app, those layers end up never getting reused and then lay around taking up
-harddrive space.
+I completely forgot that as I deployed new changes to production, there was
+lingering old docker images laying dormant on my production VM, increasing in
+size of time.
 
 It never clicked for me until I ran into the problem, hopefully this short blog
 article will help others avoid this problem in the future as well.
