@@ -2,6 +2,8 @@
 
 My personal blog
 
+Requires node v10.23.1
+
 To run locally
 
 ```bash
