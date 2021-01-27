@@ -9,7 +9,7 @@ interesting to talk briefly about the [listifi](https://listifi.app) tech stack.
 
 # Tech stack
 
-I'd be remise if I didn't use my app before discussing my list of stack choices.
+I'd be remiss if I didn't use my app before discussing my list of stack choices.
 [Here is my tech stack](https://listifi.app/u/erock/listifi-tech-stack).
 
 In general, when I build an app I tend to focus on gluing the pieces together
@@ -24,10 +24,10 @@ previous
 
 ## Front-end
 
-There are some common choices in my list, in particular: typescript and react. I
+There are some common choice in my list, in particular: typescript and react. I
 also opted to use a component library [chakra-ui](https://chakra-ui.com)
 primarily because it made it easy to make CSS changes by using react component
-props. It also wasn't a massive libray that tried to solve every design or UX
+props. It also wasn't a massive library that tried to solve every design or UX
 problem users would come across.
 
 One potentially controversial choices was reaching for `redux`. It seems as of
@@ -131,7 +131,7 @@ to install one yourself, I love that! `koa` has a great middleware system,
 adopted from [express](http://expressjs.com/).
 
 I originally went with [prismajs](https://www.prisma.io/) but ultimately found
-the library too limited and restrictive. I would highly recommend people use it
+the library is too limited and restrictive. I would highly recommend people use it
 if they are using `graphql`, but for a simple RESTful API, I found it couldn't
 do even the simplest of SQL queries.
 
