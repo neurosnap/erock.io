@@ -35,7 +35,7 @@ These posts drove most of my site traffic over the past few weeks.
 - 185 guest users
 - 13 registered users
 
-![Website traffic](/traffic.png)
+![Website traffic](/listifi_traffic.png)
 
 ## A Sobering Experience
 
