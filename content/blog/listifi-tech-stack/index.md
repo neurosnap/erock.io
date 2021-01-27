@@ -35,11 +35,12 @@ late `redux` has fallen slightly out-of-favor and more people are migrating
 towards react-specific libraries like [recoil](https://recoiljs.org/). I spent
 some time researching `recoil` and ultimately decided it did not fit into my
 personal design choices. In particular, I don't like how tightly coupled
-`recoil` is to `react`. I find this tight coupling makes it an easier API to work
-with, but will inevitably lead to issues if I wanted to build a react-native
-mobile app or a CLI app. Since `redux` is framework agnostic, battle-tested, and
-using libraries like [robodux](https://github.com/neurosnap/robodux) I can avoid
-90% of the boilerplate.
+`recoil` is to `react`. I find this tight coupling makes it an easier API to
+work with, but will inevitably lead to issues if I wanted to build a
+react-native mobile app or a CLI app. Since `redux` is framework agnostic,
+battle-tested, and using libraries like
+[robodux](https://github.com/neurosnap/robodux) I can avoid 90% of the
+boilerplate.
 
 `robodux` is great because it promotes the idea that `redux` is just a local
 database. I can create database tables which translate to `slices` in the
@@ -125,9 +126,9 @@ It's a very useful little library that is a satisfying hybrid between
 
 On the backend I decided to go with [koa](https://koajs.com/). I found the
 minimalist approach of the library to be aesthetically pleasing and exactly what
-I want from a web server. Koa doesn't even come bundled with a router, you
- have to install one yourself, I love that! `koa` has a great middleware system, adopted from
-[express](http://expressjs.com/).
+I want from a web server. Koa doesn't even come bundled with a router, you have
+to install one yourself, I love that! `koa` has a great middleware system,
+adopted from [express](http://expressjs.com/).
 
 I originally went with [prismajs](https://www.prisma.io/) but ultimately found
 the library too limited and restrictive. I would highly recommend people use it
@@ -138,33 +139,42 @@ So, in the end, I switched to [knexjs](http://knexjs.org/) which, again, plays
 right into my preferences. It's a query builder. When I think about how to query
 my data, I really just want to write SQL.
 
-*As an aside, I really do not get the
-fascination with ORMs. SQL is already a DSL, why are we re-inventing the wheel
-and adding another layer of abstraction? SQL is amazing and more people should
-be comfortable writing in it.*
+_As an aside, I really do not get the fascination with ORMs. SQL is already a
+DSL, why are we re-inventing the wheel and adding another layer of abstraction?
+SQL is amazing and more people should be comfortable writing in it._
 
 I ended up writing my own server-side rendering implementation for `react`. All
-in, with data loading and getting data loaded into `redux` I wrote about 300 lines of
-code. Once I landed on a working implementation, the rest was pretty
+in, with data loading and getting data loaded into `redux` I wrote about 300
+lines of code. Once I landed on a working implementation, the rest was pretty
 straight-forward. However, I get why people don't want to keep rebuilding SSR
 over and over again and end up switching to something like
 [nextjs](https://nextjs.org).
 
 ## Deployment
 
-For deployment I tend to lean heavily on docker.  I use [docker-compose](https://docs.docker.com/compose/) for development and [docker-machine](https://docs.docker.com/machine/) for deployment.
-Since this was a fresh project that I don't know how far I'm going to take it, I didn't want to create an automated build pipeline using CI.  I'll briefly describe my deployment lifecycle:
+For deployment I tend to lean heavily on docker. I use
+[docker-compose](https://docs.docker.com/compose/) for development and
+[docker-machine](https://docs.docker.com/machine/) for deployment. Since this
+was a fresh project that I don't know how far I'm going to take it, I didn't
+want to create an automated build pipeline using CI. I'll briefly describe my
+deployment lifecycle:
 
 - Develop using `docker-compose` locally
 - Build features locally
 - Use a production tuned `docker-compose` yml file to build images locally
 - Push the images to Google’s Container Registry
-- Then I run `eval $(docker-machine <name> env)` to tunnel into my production VM’s docker
-- Then I run `docker-compose -f production.yml pull --ignore-pull-failures` to download the new images
-- Then I run `docker-compose -f production.yml up --no-deps -d` to restart my containers with the new images
+- Then I run `eval $(docker-machine <name> env)` to tunnel into my production
+  VM’s docker
+- Then I run `docker-compose -f production.yml pull --ignore-pull-failures` to
+  download the new images
+- Then I run `docker-compose -f production.yml up --no-deps -d` to restart my
+  containers with the new images
 
-My VM was on [Google's Cloud Compute](https://compute.google.com) and my domain was hosted on [Cloudflare](https://cloudflare.com).
+My VM was on [Google's Cloud Compute](https://compute.google.com) and my domain
+was hosted on [Cloudflare](https://cloudflare.com).
 
 ## Conclusion
 
-This covers a high-level overview of my tech stack and something I will continue to reach for on new projects.  It fits nicely into my development style and I understand how all the pieces work together because I wrote the glue myself.
+This covers a high-level overview of my tech stack and something I will continue
+to reach for on new projects. It fits nicely into my development style and I
+understand how all the pieces work together because I wrote the glue myself.

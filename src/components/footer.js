@@ -26,7 +26,7 @@ function Footer() {
               target="_blank"
               rel="noopener noreferrer"
             >
-             email 
+              email
             </a>{' '}
             &bull;{' '}
             <a
