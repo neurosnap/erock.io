@@ -131,9 +131,9 @@ to install one yourself, I love that! `koa` has a great middleware system,
 adopted from [express](http://expressjs.com/).
 
 I originally went with [prismajs](https://www.prisma.io/) but ultimately found
-the library is too limited and restrictive. I would highly recommend people use it
-if they are using `graphql`, but for a simple RESTful API, I found it couldn't
-do even the simplest of SQL queries.
+the library is too limited and restrictive. I would highly recommend people use
+it if they are using `graphql`, but for a simple RESTful API, I found it
+couldn't do even the simplest of SQL queries.
 
 So, in the end, I switched to [knexjs](http://knexjs.org/) which, again, plays
 right into my preferences. It's a query builder. When I think about how to query

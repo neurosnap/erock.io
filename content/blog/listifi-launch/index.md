@@ -6,8 +6,8 @@ description: A retrospective on the launch of listifi.app
 
 [listifi.app](https://listifi.app) is an app I built recently to solve the
 problem of sharing lists with friends and colleagues. I often found myself
-sharing the same lists over and over again. List apps are everywhere, but most of
-them focus on productivity. Listifi is a social list sharing site with the
+sharing the same lists over and over again. List apps are everywhere, but most
+of them focus on productivity. Listifi is a social list sharing site with the
 intention of making lists extremely simple to share with people.
 
 In this article I'd like to talk about the overall reception of my launch, what
