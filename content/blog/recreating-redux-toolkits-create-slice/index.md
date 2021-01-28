@@ -86,8 +86,9 @@ function createAction<P = any>(type: string) {
     };
   };
 
-  // this overrides the default stringification method so when we stringify the
-  // action creator we get the action type
+  // this overrides the default stringification
+  // method so when we stringify the action creator
+  // we get the action type
   actionCreator.toString = () => `${type}`;
   return actionCreator;
 }
@@ -97,11 +98,19 @@ function createAction<P = any>(type: string) {
 
 ```ts
 const addTodo = createAction<ToDo>('ADD_TODO');
-addTodo({ id: '1', text: 'build my own createAction', completed: true });
+addTodo({
+  id: '1',
+  text: 'build my own createAction',
+  completed: true
+});
 /*
 {
   type: 'ADD_TODO',
-  payload: { id: '1', text: 'build my own createAction', completed: true },
+  payload: {
+    id: '1',
+    text: 'build my own createAction',
+    completed: true
+  },
 }
 */
 ```
@@ -121,27 +130,33 @@ manner.
 For the purposes of our demonstration, we will _not_ be using `immer`.
 
 ```js
-// for the purposes of this demonstration I'm removing types because otherwise
-// it would dramatically increase the complexity of this code.
+// for the purposes of this demonstration I'm removing
+// types because otherwise it would dramatically increase
+// the complexity of this code.
 function createReducer(initialState, reducers) {
   /*
-    This is a reducer function that selects one of the other reducer functions
-    based on the action  type (key).  When we call this reducer, we do a lookup
-    on our `reducers` object by the key which, in this case, is the `action.type`.
-    If there's a match we call that reducer function with the `action.payload`.
+    This is a reducer function that selects one of the
+    other reducer functions based on the action  type (key).
+    When we call this reducer, we do a lookup on our
+    `reducers` object by the key which, in this case,
+    is the `action.type`.  If there's a match we call that
+    reducer function with the `action.payload`.
 
-    If our `reducers` object was { increment: (state, payload) => state += 1 }
-    and the reducer function received: state = 0, action = { type: 'increment' }
-    we match the action type with the reducers key 'increment',call that reducer function,
-    and the new state value would be `1`.
+    If our `reducers` object was
+    { increment: (state, payload) => state += 1 }
+    and the reducer function received:
+      state = 0, action = { type: 'increment' }
+    we match the action type with the reducers key
+    'increment',call that reducer function, and the new
+    state value would be `1`.
   */
   const reducer = (state = initialState, action) => {
     const caseReducer = reducers[action.type];
     if (!caseReducer) {
       return state;
     }
-    // note that I am not passing the entire action object to each reducer,
-    // simply the payload
+    // note that I am not passing the entire action
+    // object to each reducer, simply the payload
     return caseReducer(state, action.payload);
   };
 
@@ -163,7 +178,8 @@ const reducer = createReducer([], {
   },
   toggleTodo: (state, payload: string) => {
     return state.map((todo) => {
-      // when we find the todo id that matches the payload we toggle the completed state
+      // when we find the todo id that
+      // matches the payload we toggle the completed state
       if (todo.id === payload) {
         return { ...todo, completed: !todo.completed };
       }
@@ -173,11 +189,27 @@ const reducer = createReducer([], {
 });
 
 const store = createStore(reducer, []);
-store.dispatch(addTodo({ id: '1', text: 'byo createAction', completed: true }));
 store.dispatch(
-  addTodo({ id: '2', text: 'byo createReducer', completed: false }),
+  addTodo({
+    id: '1',
+    text: 'byo createAction',
+    completed: true
+  })
 );
-store.dispatch(addTodo({ id: '3', text: 'byo createSlice', completed: false }));
+store.dispatch(
+  addTodo({
+    id: '2',
+    text: 'byo createReducer',
+    completed: false
+  }),
+);
+store.dispatch(
+  addTodo({
+    id: '3',
+    text: 'byo createSlice',
+    completed: false
+  })
+);
 /*
   [
     { id: '1', text: 'byo createAction', completed: true }
@@ -201,7 +233,8 @@ Okay, now that we have our implementation for `createAction` and `createReducer`
 built, we can move onto building our `createSlice`.
 
 ```js
-// helper to build action types scoped to the slice name to avoid naming conflicts
+// helper to build action types scoped to the
+// slice name to avoid naming conflicts
 const actionTypeBuilder = (slice) => (action) =>
   slice ? `${slice}/${action}` : action;
 
@@ -215,9 +248,11 @@ export default function createSlice({
   const createActionType = actionTypeBuilder(name);
 
   /*
-  `createSlice` will create an action for each key:value pair inside the main
-  `reducers` property.  `extraReducers` does not create an action for the
-  key:value pair which allows outside actions to map to a reducer inside our slice.
+  `createSlice` will create an action for each key:value
+  pair inside the main `reducers` property.
+  `extraReducers` does not create an action for the key:value
+  pair which allows outside actions to map to a
+  reducer inside our slice.
   */
   const reducerMap = actionKeys.reduce((map, action) => {
     map[createActionType(action)] = reducers[action];
@@ -227,8 +262,9 @@ export default function createSlice({
   // using our `createReducer` :tada:
   const reducer = createReducer(initialState, reducerMap);
 
-  // this builds an object where the key is the actionType and the value is the
-  // corresponding actionCreator
+  // this builds an object where the key is the
+  // actionType and the value is the corresponding
+  // actionCreator
   const actionMap = actionKeys.reduce((map, action) => {
     const type = createActionType(action);
     // using our `createAction` :tada:
@@ -268,23 +304,48 @@ const { reducer, actions } = createSlice({
 });
 const { addTodo, toggleTodo } = actions;
 console.log(
-  addTodo({ id: '1', text: 'build my own createAction', completed: true }),
+  addTodo({
+    id: '1',
+    text: 'build my own createAction',
+    completed: true
+  }),
 );
 /*
 {
   type: 'todos/ADD_TODO',
-  payload: { id: '1', text: 'build my own createAction', completed: true },
+  payload: {
+    id: '1',
+    text: 'build my own createAction',
+    completed: true
+  },
 }
 */
 
-// after this point everything works exactly the same as our previous example
+// after this point everything works exactly
+// the same as our previous example
 const store = createStore(reducer, []);
-store.dispatch(addTodo({ id: '1', text: 'byo createAction', completed: true }));
+store.dispatch(
+  addTodo({
+    id: '1',
+    text: 'byo createAction',
+    completed: true
+  })
+);
 
 store.dispatch(
-  addTodo({ id: '2', text: 'byo createReducer', completed: false }),
+  addTodo({
+    id: '2',
+    text: 'byo createReducer',
+    completed: false
+  }),
 );
-store.dispatch(addTodo({ id: '3', text: 'byo createSlice', completed: false }));
+store.dispatch(
+  addTodo({
+    id: '3',
+    text: 'byo createSlice',
+    completed: false
+  })
+);
 /*
   [
     { id: '1', text: 'byo createAction', completed: true }

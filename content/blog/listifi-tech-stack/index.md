@@ -111,10 +111,13 @@ export function* onFetchLists() {
   ]);
 }
 
-// This is a helper function that will convert a map of action creator names to effects.
-// When we dispatch `fetchLists` it will activate `onFetchLists`:
-// e.g. store.dispatch(fetchLists());
-export { fetchLists } = createEffects({ fetchLists: onFetchLists });
+// This is a helper function that will
+// convert a map of action creator names to effects.
+// When we dispatch `fetchLists` it will
+// activate `onFetchLists`: e.g. store.dispatch(fetchLists());
+export { fetchLists } = createEffects({
+  fetchLists: onFetchLists
+});
 ```
 
 It's a very useful little library that is a satisfying hybrid between

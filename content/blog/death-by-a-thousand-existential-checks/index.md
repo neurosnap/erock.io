@@ -148,10 +148,13 @@ interface Props {
 }
 
 const selectBlogs = (state) => state.blogs || {};
-const selectBlogById = (state, { id }: { id: string }) => selectBlogs(state).[id];
+const selectBlogById = (state, { id }: { id: string }) =>
+  selectBlogs(state).[id];
 
 const BlogArticle = ({ blogId }: Props) => {
-  const blog = useSelector((state) => selectBlogById(state, { id: blogId }));
+  const blog = useSelector(
+    (state) => selectBlogById(state, { id: blogId })
+  );
   if (!blog) {
     return <div>Could not find blog article</div>;
   }
@@ -251,7 +254,9 @@ const defaultBlog = (blog: Partial<Blog> = {}): Blog => {
   };
 };
 /*
-  console.log(defaultBlog({ id: '123', body: 'blog content!' }));
+  console.log(
+    defaultBlog({ id: '123', body: 'blog content!' })
+  );
   {
     id: '123',
     body: 'some content!',
@@ -335,12 +340,15 @@ function deserializeBlog(blog: BlogResponse): Blog {
   };
 }
 
-function deserializeAuthor(author: AuthorResponse | null): Author {
+function deserializeAuthor(
+  author: AuthorResponse | null
+): Author {
   if (!author) {
     return defaultAuthor();
   }
 
-  // you can see here that we change the API response from `user_name` to `username`
+  // you can see here that we change
+  // the API response from `user_name` to `username`
   return {
     id: author.id,
     username: author.user_name,
@@ -356,7 +364,8 @@ function deserializeSocialLink(
     return defaultSocial();
   }
 
-  // here we do some transformations to set sane values for when a property doesn't exist
+  // here we do some transformations to set sane
+  // values for when a property doesn't exist
   return {
     id: social.id,
     website: social.website || '',
@@ -416,14 +425,19 @@ interface Blog {
   author: Author;
 }
 
-const fallbackBlog = defaultBlog({ body: 'Could not find blog article' });
+const fallbackBlog = defaultBlog({
+  body: 'Could not find blog article'
+});
 const selectBlogs = (state) => state.blogs;
-// here we use a fallback blog for when we cannot find the blog article
+// here we use a fallback blog for when
+// we cannot find the blog article
 const selectBlogById = (state, { id }: { id: string }) =>
   selectBlogs(state)[id] || fallbackBlog;
 
 const BlogArticle = ({ blogId }: Props) => {
-  const blog = useSelector((state) => selectBlogById(state, { id: blogId }));
+  const blog = useSelector(
+    (state) => selectBlogById(state, { id: blogId })
+  );
   return (
     <div>
       <div>{blog.body}</div>
@@ -457,7 +471,9 @@ but if we want, we could instead do a single existential check on the `id` of
 the blog entity and then return early:
 
 ```tsx
-const blog = useSelector((state) => selectBlogById(state, { id: blogId }));
+const blog = useSelector(
+  (state) => selectBlogById(state, { id: blogId })
+);
 if (!blog.id) {
   return <div>Could not find blog article</div>;
 }
@@ -555,8 +571,9 @@ async function fetchBlogs() {
   const authors = [];
   const socialLinks = [];
 
-  // we process the data once so we don't have to perform existential checks
-  // in our react components
+  // we process the data once so we don't
+  // have to perform existential checks in our
+  // react components
   data.blogs.forEach((blog) => {
     blogs.push(deserializeBlog(blog));
     const author = blog.author;
