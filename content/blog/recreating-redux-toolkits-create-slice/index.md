@@ -101,7 +101,7 @@ const addTodo = createAction<ToDo>('ADD_TODO');
 addTodo({
   id: '1',
   text: 'build my own createAction',
-  completed: true
+  completed: true,
 });
 /*
 {
@@ -193,22 +193,22 @@ store.dispatch(
   addTodo({
     id: '1',
     text: 'byo createAction',
-    completed: true
-  })
+    completed: true,
+  }),
 );
 store.dispatch(
   addTodo({
     id: '2',
     text: 'byo createReducer',
-    completed: false
+    completed: false,
   }),
 );
 store.dispatch(
   addTodo({
     id: '3',
     text: 'byo createSlice',
-    completed: false
-  })
+    completed: false,
+  }),
 );
 /*
   [
@@ -307,7 +307,7 @@ console.log(
   addTodo({
     id: '1',
     text: 'build my own createAction',
-    completed: true
+    completed: true,
   }),
 );
 /*
@@ -328,23 +328,23 @@ store.dispatch(
   addTodo({
     id: '1',
     text: 'byo createAction',
-    completed: true
-  })
+    completed: true,
+  }),
 );
 
 store.dispatch(
   addTodo({
     id: '2',
     text: 'byo createReducer',
-    completed: false
+    completed: false,
   }),
 );
 store.dispatch(
   addTodo({
     id: '3',
     text: 'byo createSlice',
-    completed: false
-  })
+    completed: false,
+  }),
 );
 /*
   [

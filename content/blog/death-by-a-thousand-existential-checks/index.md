@@ -340,9 +340,7 @@ function deserializeBlog(blog: BlogResponse): Blog {
   };
 }
 
-function deserializeAuthor(
-  author: AuthorResponse | null
-): Author {
+function deserializeAuthor(author: AuthorResponse | null): Author {
   if (!author) {
     return defaultAuthor();
   }
@@ -426,7 +424,7 @@ interface Blog {
 }
 
 const fallbackBlog = defaultBlog({
-  body: 'Could not find blog article'
+  body: 'Could not find blog article',
 });
 const selectBlogs = (state) => state.blogs;
 // here we use a fallback blog for when
@@ -435,9 +433,7 @@ const selectBlogById = (state, { id }: { id: string }) =>
   selectBlogs(state)[id] || fallbackBlog;
 
 const BlogArticle = ({ blogId }: Props) => {
-  const blog = useSelector(
-    (state) => selectBlogById(state, { id: blogId })
-  );
+  const blog = useSelector((state) => selectBlogById(state, { id: blogId }));
   return (
     <div>
       <div>{blog.body}</div>
@@ -471,9 +467,7 @@ but if we want, we could instead do a single existential check on the `id` of
 the blog entity and then return early:
 
 ```tsx
-const blog = useSelector(
-  (state) => selectBlogById(state, { id: blogId })
-);
+const blog = useSelector((state) => selectBlogById(state, { id: blogId }));
 if (!blog.id) {
   return <div>Could not find blog article</div>;
 }

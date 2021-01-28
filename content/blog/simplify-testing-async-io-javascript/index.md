@@ -383,7 +383,9 @@ expect.extend({
 test('when request is 500 - verbose', () => {
   const tester = genTester(fetchAndSaveMovie, '1');
   const actual = tester(
-    yields(call(fetch, 'http://localhost/movies/1'), { status: 500 }),
+    yields(call(fetch, 'http://localhost/movies/1'), {
+      status: 500,
+    }),
     throws((err) => err.message === 'request unsuccessful'),
     finishes(),
   );
