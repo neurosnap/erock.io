@@ -13,7 +13,7 @@ intention of making lists extremely simple to share with people.
 In this article I'd like to talk about the overall reception of my launch, what
 I learned along the way, and what I plan to do next.
 
-![listifi](/listifi.png)
+![listifi](./listifi.png)
 
 # Reception
 
@@ -35,7 +35,7 @@ These posts drove most of my site traffic over the past few weeks.
 - 185 guest users
 - 13 registered users
 
-![Website traffic](/listifi_traffic.png)
+![Website traffic](./listifi_traffic.png)
 
 ## A Sobering Experience
 

@@ -57,9 +57,7 @@ function fetchAndSaveMovie(id) {
     });
 }
 
-fetchAndSaveMovie('1')
-  .then(console.log)
-  .catch(console.error);
+fetchAndSaveMovie('1').then(console.log).catch(console.error);
 ```
 
 Reading the code we are doing the following:
@@ -206,9 +204,7 @@ function* fetchAndSaveMovie(id) {
   return msg;
 }
 
-task(fetchAndSaveMovie, '1')
-  .then(console.log)
-  .catch(console.error);
+task(fetchAndSaveMovie, '1').then(console.log).catch(console.error);
 ```
 
 The first thing to note is how flat the function has become. The original

@@ -1,8 +1,6 @@
 import React from 'react';
 import { StaticQuery, graphql } from 'gatsby';
 
-import { rhythm } from '../utils/typography';
-
 function Footer() {
   return (
     <StaticQuery
@@ -10,23 +8,18 @@ function Footer() {
       render={(data) => {
         const { social } = data.site.siteMetadata;
         return (
-          <footer
-            style={{
-              marginTop: rhythm(2.5),
-              paddingTop: rhythm(1),
-            }}
-          >
+          <footer>
             <div style={{ float: 'right' }}>
               <a href="/rss.xml" target="_blank" rel="noopener noreferrer">
                 rss
               </a>
             </div>
             <a
-              href={`mailto:${social.email}`}
+              href={`https://twitter.com/${social.twitter}`}
               target="_blank"
               rel="noopener noreferrer"
             >
-              email
+              twitter
             </a>{' '}
             &bull;{' '}
             <a
@@ -56,7 +49,7 @@ const footerQuery = graphql`
     site {
       siteMetadata {
         social {
-          email
+          twitter
           github
           stackoverflow
         }

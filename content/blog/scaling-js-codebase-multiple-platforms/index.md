@@ -319,10 +319,10 @@ import App from './components/app';
 const store = createState({ rootReducer, rootSaga });
 
 render(
-    <Provider store={store}>
-        <App />
-    </Prodiver>,
-    document.body,
+  <Provider store={store}>
+    <App />
+  </Prodiver>,
+  document.body,
 );
 ```
 

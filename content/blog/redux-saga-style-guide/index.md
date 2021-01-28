@@ -313,9 +313,8 @@ export const reducers = createReducerMap(people);
 // selectors are always prefixed with `select`.  These should be exported so
 // other packages and the UI layer can use them
 export const selectPeople = (state: State) => state[name] || {};
-export const selectPeopleAsList = createSelector(
-  selectPeople,
-  (peeps) => Object.values(peeps),
+export const selectPeopleAsList = createSelector(selectPeople, (peeps) =>
+  Object.values(peeps),
 );
 export const selectPerson = (state: State, { id }: { id: string }) =>
   selectPeople(state)[id];
