@@ -1,18 +1,19 @@
 ---
 title: Customer interviews killed my product idea
-date: '2021-31-1T00:00:00.000Z'
+date: '2021-01-31T00:00:00.000Z'
 description:
   How I saved months of development time on an idea that wouldn't work
 ---
 
-This is a story that saved me months of development and it's all thanks to
-interviewing customers to figure out if they had the same problem I was trying
-to solve. The short answer is it's a solved problem, just not in the way I
-originally thought.
+![killing-them-softly](./killing-them-softly.jpg)
+
+This is a story that saved me months of development time and it's all thanks to
+interviewing potential customers. The short answer is it's a solved problem,
+just not in the way I originally thought.
 
 This blog article describes my process to discovering that my product idea
 wasn't worth my time or energy. I hope by the end of this article others will
-see the value in interviewing customers before building.
+see the value in interviewing customers before writing a single line of code.
 
 ## What was the problem?
 
@@ -94,9 +95,8 @@ other note taking problems these apps are solving. After my investigation, I
 felt like the problem has effectively been solved by other apps on the market
 and my solution wasn't as profound as I thought.
 
-> Nothing in life is as important as you think it is, while you are thinking
-> about it.
-> [-- Daniel Kahneman](https://twitter.com/shreyas/status/1263890586316218368)
+> Nothing In Life Is As Important As You Think It Is, While You Are Thinking
+> About It -- [Daniel Kahneman](https://www.edge.org/response-detail/11984)
 
 After discussing my customer interviews with a colleague, another important
 lesson I learned was that my line of questioning was leading the witness. I
