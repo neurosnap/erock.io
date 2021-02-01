@@ -127,8 +127,10 @@ possibly led me to uncovering other problems:
 
 - How do you stay organized using multiple productivity apps?
 - What are some problems you have staying organized?
+- Could you stack rank your problems in terms of significance?
 - How do you stay organized at work when the company uses different tools to
   organize notes, docs, and information?
+- Do you pay for any existing note taking service?
 
 In the end, this was another valuable learning experience. Ultimately I got to
 the answer I wanted: this product wasn't worth building. But, because my line of
