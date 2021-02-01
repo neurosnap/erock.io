@@ -12,7 +12,7 @@ interviewing potential customers. After interviewing them I realized that the
 problem has already been solved, just not in the way I originally would have
 thought.
 
-This blog article describes my process for discovering that my product idea
+This blog article describes my process for discovering that the product idea
 wasn't worth my time or energy. I hope by the end of this article others will
 see the value in interviewing customers before writing a single line of code.
 
@@ -64,7 +64,7 @@ understand:
 - Do you use an app to solve this problem?  If so, what is it?
 - What if there was a tool to help search for your information, would you find
   something like that useful?
-- What if you employer adopted this tool, allowing you to search for any notes,
+- What if your employer adopted this tool, allowing you to search for any notes,
   docs the company created, would you find this tool useful?
 
 ## Results of the interviews
@@ -119,13 +119,13 @@ I wanted to get them to talk about the problem I was trying to solve instead of
 asking them what problems they have with staying organized and writing notes in
 multiple apps. I think these conversations are a dance.
 
-> I need them to confess the problem I'm investigating without me directly
-> asking them if it's a problem.
+> I want them to confess the problem I'm investigating without directly asking
+> them if it's a problem.
 
 So I think reframing the questions could have gotten me better answers and
 possibly led me to uncovering other problems:
 
-- How do you stay organized using multiple producitivity apps?
+- How do you stay organized using multiple productivity apps?
 - What are some problems you have staying organized?
 - How do you stay organized at work when the company uses different tools to
   organize notes, docs, and information?
@@ -144,10 +144,11 @@ I'm making, and it's energizing me to continue down this path of talking to
 people.
 
 This exercise of performing customer interviews was eye opening: creating a
-product in a vacuum is a major reason why my product haven't been successful.
-I'm figuring this out by saving hundreds of hours in product development. I
-learn through experience, so it seems obvious now why product managers interview
-customers constantly, but it wasn't obvious to me until recently.
+product in a vacuum is a major reason why my products have _not_ been
+successful. I'm figuring this out by saving hundreds of hours in product
+development. I learn through experience, so it seems obvious now why product
+managers interview customers constantly, but it wasn't obvious to me until
+recently.
 
 **These customer interviews killed my product idea and I couldn't be happier
 about it.**
