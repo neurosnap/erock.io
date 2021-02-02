@@ -3,7 +3,7 @@ module.exports = {
     title: `reduction`,
     author: {
       name: `Eric Bower`,
-      summary: `who lives and works in Ann Arbor, Michigan`
+      summary: `who lives and works in Ann Arbor, Michigan`,
     },
     description: `A blog by Eric Bower`,
     siteUrl: `https://erock.io`,
@@ -11,7 +11,7 @@ module.exports = {
       github: `neurosnap`,
       stackoverflow: `https://stackoverflow.com/users/1713216/neurosnap`,
       email: `me@erock.io`,
-      twitter: `neurosnap`
+      twitter: `neurosnap`,
     },
   },
   pathPrefix: '/',
@@ -49,6 +49,7 @@ module.exports = {
           `gatsby-remark-prismjs`,
           `gatsby-remark-copy-linked-files`,
           `gatsby-remark-smartypants`,
+          `gatsby-remark-reading-time`,
         ],
       },
     },
@@ -78,4 +79,4 @@ module.exports = {
     // To learn more, visit: https://gatsby.dev/offline
     // `gatsby-plugin-offline`,
   ],
-}
+};
