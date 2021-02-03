@@ -49,15 +49,6 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     posts.forEach((post, index) => {
       const previousPostId = index === 0 ? null : posts[index - 1].id
       const nextPostId = index === posts.length - 1 ? null : posts[index + 1].id
-      const ogImage = createOpenGraphImage(createPage, {
-        path: `og-images/${post.id}.png`,
-        component: path.resolve(`src/templates/og-image.js`),
-        size: {
-          width: 1200,
-          height: 630,
-        },
-        context: { id: post.id, description: post.frontmatter.title, date: post.frontmatter.date }
-      })
 
       createPage({
         path: post.fields.slug,
@@ -66,7 +57,15 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
           id: post.id,
           previousPostId,
           nextPostId,
-          ogImage
+          ogImage: createOpenGraphImage(createPage, {
+            path: `og-images/${post.id}.png`,
+            component: path.resolve(`src/templates/og-image.js`),
+            size: {
+              width: 1200,
+              height: 630,
+            },
+            context: { id: post.id, description: post.frontmatter.title, date: post.frontmatter.date }
+          })
         },
       })
     })
