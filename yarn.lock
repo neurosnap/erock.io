@@ -6842,10 +6842,10 @@ gatsby-plugin-manifest@^2.11.0:
     semver "^7.3.2"
     sharp "^0.27.0"
 
-gatsby-plugin-ogi@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-ogi/-/gatsby-plugin-ogi-1.0.0.tgz#a0c68547e653b132d37240dd26f3d5cb560a5049"
-  integrity sha512-Q0ORJ7Kv5S1VXKa64fuPagjj9NDgY5lYIdxauix+ZFDmWL7otbQAwGts9S8K6lwavellU9MshSfc/gvSdWbv5Q==
+gatsby-plugin-ogi@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-ogi/-/gatsby-plugin-ogi-1.0.2.tgz#d5321571e5a62c4f633961903cba7f884f39b4cf"
+  integrity sha512-ZMEHkfgYwTuMmRTb+ArmduhdugTux6d+f5QbxtK/Z5MshRouq0bCel9aY9eKlMBoSDtdsfaXpv8ro+3U1gtjgA==
   dependencies:
     express "^4.17.1"
     puppeteer "^3.3.0"
