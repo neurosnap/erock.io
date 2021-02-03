@@ -9,7 +9,6 @@ const BlogPostTemplate = ({ data, location, pageContext }) => {
   const post = data.markdownRemark;
   const siteTitle = data.site.siteMetadata.title;
   const { previous, next } = data;
-  console.log(pageContext)
   return (
     <Layout location={location} title={siteTitle}>
       <SEO
@@ -17,13 +16,19 @@ const BlogPostTemplate = ({ data, location, pageContext }) => {
         description={post.frontmatter.description || post.excerpt}
         meta={[{
           property: `og:image`,
-          content: data.site.siteMetadata.siteUrl + '/' + pageContext.ogImage.path + '/',
+          content: data.site.siteMetadata.siteUrl + '/' + pageContext.ogImage.path,
         }, {
           property: 'og:image:width',
           content: pageContext.ogImage.size.width,
         }, {
           property: 'og:image:height',
           content: pageContext.ogImage.size.height
+        }, {
+          property: "twitter:card",
+          content: "summary_large_image"
+        }, {
+          property: "twitter:image",
+          content: data.site.siteMetadata.siteUrl + '/' + pageContext.ogImage.path,
         }]}
       />
       <article
