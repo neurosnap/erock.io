@@ -6,7 +6,7 @@ module.exports = {
       summary: `who lives and works in Ann Arbor, Michigan`,
     },
     description: `A blog by Eric Bower`,
-    siteUrl: `https://erock.io`,
+    siteUrl: process.env.NODE_ENV === 'production' ? `https://erock.io` : 'http://localhost:8000',
     social: {
       github: `neurosnap`,
       stackoverflow: `https://stackoverflow.com/users/1713216/neurosnap`,
@@ -16,6 +16,7 @@ module.exports = {
   },
   pathPrefix: '/',
   plugins: [
+    `gatsby-plugin-open-graph-images`,
     {
       resolve: `gatsby-source-filesystem`,
       options: {
