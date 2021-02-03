@@ -1,6 +1,6 @@
 const path = require(`path`)
 const { createFilePath } = require(`gatsby-source-filesystem`)
-const { createOpenGraphImage } = require(`gatsby-plugin-open-graph-images`)
+const { createOpenGraphImage } = require(`gatsby-plugin-ogi`)
 
 exports.createPages = async ({ graphql, actions, reporter }) => {
   const { createPage } = actions

@@ -16,7 +16,7 @@ module.exports = {
   },
   pathPrefix: '/',
   plugins: [
-    `gatsby-plugin-open-graph-images`,
+    `gatsby-plugin-ogi`,
     {
       resolve: `gatsby-source-filesystem`,
       options: {
