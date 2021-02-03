@@ -50,7 +50,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       const previousPostId = index === 0 ? null : posts[index - 1].id
       const nextPostId = index === posts.length - 1 ? null : posts[index + 1].id
       const ogImage = createOpenGraphImage(createPage, {
-        path: `og-images/posts/${post.id}.png`,
+        path: `og-images/${post.id}.png`,
         component: path.resolve(`src/templates/og-image.js`),
         size: {
           width: 1200,
