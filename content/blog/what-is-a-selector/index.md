@@ -298,20 +298,7 @@ there's a cost to using them.
 Basically, the decision tree for using `createSelector` vs `useMemo` should look
 something like this:
 
-- Is my computation >= O(n)?
-  - Does my computation solely rely on state data?
-    - Use `createSelector`
-  - Does my computation rely on state data and component data?
-    - Can I easily use `createSelector` with props?
-      - Use `createSelector`
-    - Does each component need its own memoized selector?
-      - Use a selector factory
-  - Is my computation one-off with no clear resuability?
-    - Is it a heavy computation O(n) > 1000?
-      - Use `useMemo`
-  - Does my computation not rely on redux data at all?
-    - Is it a havey computation O(n) > 1000?
-      - Use `useMemo`
+![selector-flow-chart](./selector-flow-chart.jpg)
 
 The simplest heuristic I can come up with:
 
