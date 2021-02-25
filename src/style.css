@@ -317,6 +317,8 @@ a:focus {
 
 .gatsby-highlight {
   margin-bottom: var(--spacing-8);
+  margin-right: -1.5rem;
+  margin-left: -1.5rem;
 }
 
 /* Media queries */
@@ -329,5 +331,9 @@ a:focus {
   ul,
   ol {
     list-style-position: inside;
+  }
+  .gatsby-highlight {
+    margin-left: 0;
+    margin-right: 0;
   }
 }
